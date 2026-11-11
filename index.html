@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minilogue XD Field Guide</title>
+<meta name="description" content="An interactive guide to the minilogue xd synthesizer: a playable 3D panel, twelve short lessons, patch recipes and a quiz.">
+<meta property="og:title" content="Minilogue XD Field Guide">
+<meta property="og:description" content="Learn every knob and switch on a playable panel, then combine them into patches.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#232527">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23232527'/%3E%3Ccircle cx='16' cy='16' r='9' fill='%233a3d40' stroke='%23777' /%3E%3Cpath d='M16 16 L21 9' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: the instrument sits on a tinted band; everything below is two ruled columns on an 8px rhythm. */
+:root{
+  --bg:#eceeec; --card:#ffffff; --ink:#141618; --mute:#5d646a;
+  --hair:#d9dddb; --accent:#d8371f; --accent-soft:rgba(216,55,31,.09);
+  --good:#1c8556; --good-soft:rgba(28,133,86,.12);
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#08090a; --card:#111213; --ink:#eceae5; --mute:#9aa0a3;
+    --hair:#2c2f32; --accent:#ff6a4d; --accent-soft:rgba(255,106,77,.14);
+    --good:#4cc38a; --good-soft:rgba(76,195,138,.15); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08090a; --card:#111213; --ink:#eceae5; --mute:#9aa0a3;
+  --hair:#2c2f32; --accent:#ff6a4d; --accent-soft:rgba(255,106,77,.14);
+  --good:#4cc38a; --good-soft:rgba(76,195,138,.15); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--card);color:var(--ink);font:400 16px/24px var(--body);-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit;text-underline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1248px;margin:0 auto;padding:0 24px}
+.band{background:var(--bg);border-bottom:1px solid var(--hair)}
+
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 32px;padding:24px 0 16px}
+.brand{font:600 24px/32px var(--display);letter-spacing:.02em}
+.brand span{color:var(--mute);font-weight:500;margin-left:12px;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+nav.tabs{display:flex;gap:24px;margin-left:auto}
+nav.tabs button{font:600 15px/32px var(--display);letter-spacing:.12em;text-transform:uppercase;background:none;border:0;border-bottom:2px solid transparent;padding:0;color:var(--mute)}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+
+.stage{padding-bottom:16px}
+.scroller{overflow-x:auto;overflow-y:hidden;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroller::-webkit-scrollbar{display:none}
+.tilt{width:max(100%,940px);aspect-ratio:1460/700;position:relative;overflow:hidden;perspective:1700px;margin-top:-4%}
+/* drawn at double size and scaled back so the tilted panel stays sharp on phones */
+#panel{display:block;position:absolute;left:0;bottom:0;width:200%;height:auto;user-select:none;-webkit-user-select:none;transform:scale3d(.5,.5,.5) rotateX(17deg);transform-origin:0 100%}
+#panel text{font-family:var(--display);fill:#e8e9e9}
+#panel .chassis{fill:url(#pg);stroke:#45484b;stroke-width:1.5}
+#panel .lip{fill:#0c0d0e}
+#panel .well{fill:#070708}
+#panel .screw{fill:#0e0f10;stroke:#4a4d50;stroke-width:1}
+#panel .div{stroke:#8d9093;stroke-width:1;opacity:.7}
+#panel .sect{font-size:16px;font-weight:600;letter-spacing:.06em;text-anchor:middle}
+#panel .lbl{font-size:10.5px;font-weight:500;letter-spacing:.05em;text-anchor:middle}
+#panel .pos{font-size:8.5px;font-weight:500;letter-spacing:.04em}
+#panel .jackt{font-size:9.5px;font-weight:500;letter-spacing:.06em;text-anchor:middle;fill:#c4c7c9}
+#panel .hit{fill:transparent;stroke:none}
+#panel .k .hit{touch-action:none}
+#panel .shadow{fill:#000;opacity:.5}
+#panel .kside{fill:#0b0c0d}
+#panel .k .body{fill:url(#kg);stroke:#5d6164;stroke-width:.9}
+#panel .ptr{stroke:#f2f3f3;stroke-width:2.6;stroke-linecap:round}
+#panel .s .body{fill:#060607;stroke:#55585b;stroke-width:1.2}
+#panel .lever{fill:url(#lv);stroke:#6d7073;stroke-width:.6}
+#panel .led{fill:#2b2d2f;stroke:#55585b;stroke-width:.8}
+#panel .led.lit{fill:#fff;stroke:#fff}
+#panel .icon{fill:none;stroke:#e8e9e9;stroke-width:1.2;stroke-linejoin:round}
+#panel .b .body,#panel .step .body{fill:#161718;stroke:#5a5d60;stroke-width:1.1}
+#panel .d .body{fill:#030303;stroke:#55585b;stroke-width:1.2}
+#panel .j .body{fill:url(#kg);stroke:#5d6164;stroke-width:1}
+#panel .ctl{cursor:pointer;outline:none}
+#panel .ctl.sel .body{stroke:#ff6a4d;stroke-width:2.4}
+#panel .ctl.sel .lbl,#panel .ctl.sel .jackt{fill:#ff8a70}
+#panel .ctl:focus-visible .body{stroke:#ff6a4d;stroke-width:2.4}
+#panel .ctl.right .body{stroke:#4cc38a;stroke-width:3.2}
+#panel .ctl.wrong .body{stroke:#ff6a4d;stroke-width:3.2;stroke-dasharray:4 3}
+#panel .hl{fill:rgba(255,106,77,.17);stroke:none;pointer-events:none}
+#panel .step.on .body{fill:#7d8389}
+#panel .step.cur .body{fill:#fff;stroke:#fff}
+#panel #scope{fill:none;stroke:#fff;stroke-width:1.4;stroke-linejoin:round}
+#panel .dname{font-size:9px;letter-spacing:.06em;fill:#c9ccce}
+#panel #mname{fill:#cfe0ff;font-size:11px;letter-spacing:.14em}
+#panel .btn.lit .body{fill:#fff;stroke:#fff}
+#panel .key{touch-action:none;cursor:pointer}
+#panel .key.w{fill:url(#wk);stroke:#8e9092;stroke-width:1}
+#panel .key.bk{fill:url(#bkg);stroke:#000;stroke-width:1}
+#panel .key.down{fill:#ff6a4d}
+
+
+.under{display:flex;align-items:center;gap:16px;padding-top:8px;min-width:0}
+.chips{display:flex;gap:20px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;font:600 13px/32px var(--display);letter-spacing:.12em;text-transform:uppercase;background:none;border:0;border-bottom:2px solid transparent;padding:0;color:var(--mute);white-space:nowrap}
+.chips button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.sound{flex:none}
+#loopBtn{font:600 14px/24px var(--display);letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--ink);background:none;border-radius:999px;padding:4px 16px;min-width:104px}
+#loopBtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+main{display:grid;gap:40px;padding:40px 0 64px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){main{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:64px;align-items:start}}
+.card{border-top:2px solid var(--ink);padding-top:16px}
+.side{display:grid;gap:40px;min-width:0}
+.eyebrow{font:600 13px/16px var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+h2{font:600 32px/40px var(--display);letter-spacing:.01em;margin:0 0 8px;text-wrap:balance}
+h3{font:600 14px/24px var(--display);letter-spacing:.14em;text-transform:uppercase;margin:24px 0 0;color:var(--mute)}
+p{margin:0 0 16px;max-width:62ch}
+.mute{color:var(--mute)}
+.small,.note{font-size:14px;line-height:20px}
+.try{border-left:2px solid var(--accent);padding-left:16px;margin:16px 0}
+.note{color:var(--mute);margin:16px 0 0}
+.note a{color:var(--ink)}
+
+.valrow{display:flex;align-items:center;gap:16px;margin:8px 0 16px}
+.valrow input[type=range]{flex:1;accent-color:var(--accent);height:32px;min-width:0;margin:0}
+.readout{font:600 24px/32px var(--display);min-width:80px;text-align:right;font-variant-numeric:tabular-nums}
+.seg{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
+.seg button{font:600 14px/24px var(--display);letter-spacing:.08em;border:1px solid var(--hair);background:none;border-radius:6px;padding:3px 12px}
+.seg button.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+.list,.tasks{list-style:none;margin:8px 0 0;padding:0}
+.list li,.tasks li{border-top:1px solid var(--hair)}
+.list li:last-child,.tasks li:last-child{border-bottom:1px solid var(--hair)}
+.list button,.tasks button{display:grid;grid-template-columns:136px minmax(0,1fr);gap:16px;width:100%;text-align:left;background:none;border:0;padding:11px 0 12px}
+.list b,.tasks i{font:600 15px/24px var(--display);letter-spacing:.08em;text-transform:uppercase;font-style:normal}
+.list span{color:var(--mute);font-size:14px;line-height:24px}
+.list button.on b{color:var(--accent)}
+.tasks i{color:var(--accent)}
+.tasks.num button{grid-template-columns:24px minmax(0,1fr)}
+
+.stepper{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}
+.stepper button{width:32px;height:32px;border-radius:50%;border:1px solid var(--hair);background:none;font:600 14px/1 var(--display);color:var(--mute);padding:0}
+.stepper button.done{border-color:var(--good);color:var(--good)}
+.stepper button.on{border-color:var(--ink);background:var(--ink);color:var(--card)}
+.rowbtns{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap}
+.btn{font:600 14px/24px var(--display);letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--ink);background:none;border-radius:999px;padding:7px 20px}
+.btn.primary{background:var(--ink);color:var(--card)}
+.btn:disabled{opacity:.3;cursor:default}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 16px}
+.flow button{font:600 14px/24px var(--display);letter-spacing:.08em;border:1px solid var(--ink);background:none;border-radius:4px;padding:3px 12px}
+.flow .mod{border-style:dashed}
+.flow em{font-style:normal;color:var(--mute)}
+
+.recipes{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:8px;margin:8px 0 0}
+.recipes button{text-align:left;border:1px solid var(--hair);background:none;border-radius:8px;padding:11px 16px 12px}
+.recipes button.on{border-color:var(--accent);background:var(--accent-soft)}
+.recipes b{display:block;font:600 18px/24px var(--display);letter-spacing:.03em}
+.recipes span{font-size:13px;line-height:16px;color:var(--mute);display:block}
+
+.opts{display:grid;gap:8px;margin:16px 0}
+.opts button{text-align:left;border:1px solid var(--hair);background:none;border-radius:8px;padding:11px 16px 12px}
+.opts button.right{border-color:var(--good);background:var(--good-soft)}
+.opts button.wrong{border-color:var(--accent);background:var(--accent-soft)}
+.verdict{font-weight:600}
+.verdict.ok{color:var(--good)} .verdict.no{color:var(--accent)}
+.bar{height:2px;background:var(--hair);margin:0 0 24px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.score{font:600 64px/64px var(--display);font-variant-numeric:tabular-nums;margin-bottom:16px}
+
+footer{border-top:1px solid var(--hair);padding:24px 0 40px;color:var(--mute);font-size:14px;line-height:20px}
+footer p{margin:0 0 4px;max-width:none}
+[hidden]{display:none!important}
+@media (max-width:600px){
+  .wrap{padding:0 16px}
+  header.top{padding:16px 0 8px}
+  nav.tabs{margin-left:0;width:100%;gap:0;justify-content:space-between}
+  .list button{grid-template-columns:104px minmax(0,1fr);gap:12px}
+  h2{font-size:28px;line-height:32px}
+}
+@media (prefers-reduced-motion:no-preference){.scroller{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<div class="band"><div class="wrap">
+  <header class="top">
+    <div class="brand">minilogue xd<span>Field guide</span></div>
+    <nav class="tabs" role="tablist" aria-label="Mode">
+      <button role="tab" data-mode="explore" id="tab-explore">Explore</button>
+      <button role="tab" data-mode="lessons" id="tab-lessons">Lessons</button>
+      <button role="tab" data-mode="recipes" id="tab-recipes">Recipes</button>
+      <button role="tab" data-mode="quiz" id="tab-quiz">Quiz</button>
+    </nav>
+  </header>
+
+  <div class="stage">
+    <div class="scroller" id="scroller"><div class="tilt"><svg id="panel" viewBox="0 0 1460 700" role="group" aria-label="The synth. Drag a knob to turn it, tap a switch or button, play the keys."></svg></div></div>
+    <div class="under">
+      <div class="sound">
+        <button id="loopBtn" type="button" aria-pressed="false">▶ Loop</button>
+      </div>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+</div></div>
+<div class="wrap">
+
+  <main>
+    <section id="pane"></section>
+    <div class="side">
+      <aside class="card" id="insp" aria-live="polite"></aside>
+    </div>
+  </main>
+  <footer>
+    <p>An unofficial study guide. Not affiliated with or endorsed by KORG Inc.; minilogue is their trademark.</p>
+    <p>Page numbers follow the 63-page minilogue xd owner's manual. <a href="https://cdn.korg.com/us/support/download/files/a5bba576f00973bf63c78cdeff83a7f7.pdf">Korg's current edition</a> also covers the xd module, so its pages run two or three later. The sound demo is a simplified one-voice model.</p>
+  </footer>
+</div>
+
+<script>
+"use strict";
+/* ---------- data ---------- */
+const R1=112,R2=222,R3=332;
+const SECS={
+ global:{name:"Master",rects:[[14,60,88,386]],blurb:"The handful of controls that affect everything: overall volume, tempo, keyboard octave and the joystick."},
+ voice:{name:"Voice mode",rects:[[108,60,86,340]],blurb:"The synth has four voices, meaning four notes can sound at once. This section decides how those four voices are used."},
+ vco1:{name:"VCO 1",rects:[[198,60,274,102]],blurb:"A VCO (voltage controlled oscillator) is where sound starts. It produces a raw, constant tone. Everything to its right shapes that tone."},
+ vco2:{name:"VCO 2",rects:[[198,164,386,106],[474,60,110,102]],blurb:"A second analog oscillator. Layer it with VCO 1 for thickness, or make the two interact using Sync, Ring and Cross Mod."},
+ multi:{name:"Multi engine",rects:[[198,272,386,120]],blurb:"A third, digital oscillator. It can be noise, an FM-style tone generator (VPM), or a custom oscillator loaded from a computer."},
+ mixer:{name:"Mixer",rects:[[587,60,86,332]],blurb:"Three volume knobs, one per sound source. This is where you decide how much of each oscillator goes on to the filter."},
+ filter:{name:"Filter",rects:[[677,60,91,336]],blurb:"A low-pass filter. It removes high frequencies above the cutoff point, turning a bright raw tone into something rounder. This is the main tone control."},
+ ampeg:{name:"Amp EG",rects:[[772,60,386,102]],blurb:"An envelope generator (EG) is a shape that plays out over time each time you press a key. This one controls volume: how a note starts, holds and fades."},
+ eg:{name:"EG",rects:[[772,164,386,106]],blurb:"A second, simpler envelope with only attack and decay. You point it at pitch or filter cutoff to make them move at the start of each note."},
+ lfo:{name:"LFO",rects:[[772,272,386,120]],blurb:"A low frequency oscillator: a slow, repeating wave you never hear directly. It wiggles another control for you, over and over."},
+ fx:{name:"Effects",rects:[[1162,60,290,102]],blurb:"Three digital effects at the very end of the chain: modulation, reverb and delay. All three can run at once."},
+ prog:{name:"Display & edit",rects:[[1162,168,290,186]],blurb:"Choosing, editing and saving programs (Korg's word for a saved sound). The display also doubles as an oscilloscope."},
+ seq:{name:"Sequencer",rects:[[1162,360,290,84],[240,396,900,42]],blurb:"A 16-step recorder built into every program. It replays notes you record and can also replay knob movements."},
+ rear:{name:"Rear jacks",rects:[[170,14,1040,24]],blurb:"The labels along the top edge mark the sockets on the back."}
+};
+const WAVES=["SAW","TRI","SQR"], OCTS=["16′","8′","4′","2′"], LMH=["100%","50%","0%"];
+const C=[
+ // global
+ {id:"master",s:"global",t:"k",x:62,y:R1,l:"MASTER",d:.7,sim:1,what:"Overall volume of the whole instrument. It is a global setting, so it is not stored with each program.",tryit:"Set it once to a comfortable level, then leave it alone. Balance individual sounds with the Mixer instead.",q:"Tap the knob that sets the overall output volume."},
+ {id:"tempo",s:"global",t:"k",x:62,y:R2,l:"TEMPO",d:.35,sim:1,what:"Speed of the sequencer and arpeggiator, from 56 to 240 BPM. It also drives the LFO when its mode is BPM, and tempo-synced delays.",tryit:"Start the loop and sweep this knob. The pattern speeds up and slows down but its pitch stays the same.",q:"Tap the knob that sets how fast the sequencer and arpeggiator run."},
+ {id:"octave",s:"global",t:"s",o:"h",x:62,y:322,l:"OCTAVE",n:["−2","−1","0","+1","+2"],leds:1,d:2,sim:1,what:"Shifts the whole keyboard up or down by as much as two octaves. The five LEDs show where you are; the middle one is home.",tryit:"The keyboard has only 37 keys. Shift down for bass lines and up for sparkly leads.",q:"Tap the switch that moves the whole keyboard up or down by octaves."},
+ {id:"joy",s:"global",t:"j",x:62,y:405,l:"",what:"Joystick. Left and right bend the pitch. Up and down can each be assigned to a parameter of your choice for every program, such as filter cutoff or LFO depth.",tryit:"On a preset, hold a note and push the stick up. Many presets open the filter or add vibrato this way."},
+ // voice
+ {id:"porta",s:"voice",t:"k",x:150,y:R1,l:"PORTAMENTO",d:0,sim:1,what:"Glide. Instead of jumping to a new note, the pitch slides there from the previous one. Higher values give a slower slide.",tryit:"Turn it to about a third, start the loop, and listen to notes swoop into each other. Classic for leads and acid bass.",q:"Tap the knob that makes notes slide into each other."},
+ {id:"vmdepth",s:"voice",t:"k",x:150,y:R2,l:"VOICE MODE\nDEPTH",d:0,what:"Does a different job in each voice mode. Poly: blends toward Duo, two stacked and detuned voices per note. Unison: detune amount, up to 50 cents. Chord: picks the chord type. Arp: picks the arpeggio pattern.",tryit:"Select Unison, hold one key, and turn this up slowly. The four voices drift apart in tuning and the sound gets huge."},
+ {id:"vmode",s:"voice",t:"s",x:120,y:R3,l:"",n:["POLY","UNISON","CHORD","ARP/LATCH"],leds:1,lab:1,hw:74,d:0,what:"How the four voices are assigned. Poly: play up to four different notes. Unison: all four voices stack on one note for a thick mono sound. Chord: one key plays a full chord. Arp/Latch: held notes are played one after another in a pattern, and Latch keeps it running after you let go. To latch, move the switch down once more while on Arp; the LED blinks.",tryit:"Hold a three-note chord and step through the modes. Same fingers, four very different results.",q:"Tap the switch that chooses between Poly, Unison, Chord and Arp."},
+ // vco1
+ {id:"v1wave",s:"vco1",t:"s",x:216,y:R1,l:"WAVE",n:WAVES,icons:1,d:0,sim:1,what:"The basic waveform. Saw is bright and buzzy, the default synth tone for basses, leads and pads. Triangle is soft and flute-like. Square is hollow and woody, like a clarinet or an old video game.",tryit:"Open the filter fully, hold a note, and switch between all three. Watch the display: you can see each shape.",q:"Tap the switch that chooses saw, triangle or square for VCO 1."},
+ {id:"v1oct",s:"vco1",t:"s",x:268,y:R1,l:"OCTAVE",n:OCTS,ledcol:1,d:1,sim:1,what:"Octave of this oscillator. The names come from organ pipe lengths: 16′ is the lowest, 2′ the highest. Each step is one octave.",tryit:"16′ for bass, 8′ for most things, 4′ and 2′ for bright leads or to add a high layer above another oscillator."},
+ {id:"v1pitch",s:"vco1",t:"k",x:345,y:R1,l:"PITCH",d:.5,sim:1,what:"Tunes the oscillator up or down by as much as an octave (±1200 cents). Center is in tune, and it moves in one-cent steps.",tryit:"Usually left at center. Tune VCO 2 against it instead."},
+ {id:"v1shape",s:"vco1",t:"k",x:430,y:R1,l:"SHAPE",d:0,what:"Bends the waveform into a variation of itself. On Square it changes the pulse width, making the tone thinner and more nasal. On Saw and Triangle it reshapes the wave to add harmonics.",tryit:"Choose Square, hold a note and sweep Shape while watching the display. Later, let the LFO move it for you with Target set to Shape."},
+ // vco2
+ {id:"v2wave",s:"vco2",t:"s",x:216,y:R2,l:"WAVE",n:WAVES,icons:1,d:0,sim:1,what:"Waveform for the second oscillator. Same three choices as VCO 1.",tryit:"Mix a square on VCO 2 under a saw on VCO 1 for a fuller tone than either gives alone."},
+ {id:"v2oct",s:"vco2",t:"s",x:268,y:R2,l:"OCTAVE",n:OCTS,ledcol:1,d:1,sim:1,what:"Octave of VCO 2. Setting it one octave below or above VCO 1 is the quickest way to make a sound bigger.",tryit:"VCO 1 at 8′ and VCO 2 at 16′ gives a bass with a solid bottom."},
+ {id:"v2pitch",s:"vco2",t:"k",x:345,y:R2,l:"PITCH",d:.5,sim:1,what:"Tunes VCO 2. A hair off center makes the two oscillators beat slowly against each other, which sounds thick and alive. Further off gives intervals, such as a fifth at +700 cents.",tryit:"Bring up both oscillators in the mixer, then nudge this just past center. That gentle swirl is called detune.",q:"Tap the knob you would nudge slightly to detune the second oscillator."},
+ {id:"v2shape",s:"vco2",t:"k",x:430,y:R2,l:"SHAPE",d:0,what:"Waveform bending for VCO 2, exactly like Shape on VCO 1.",tryit:"Give the two oscillators different Shape settings so they are not identical copies."},
+ {id:"sync",s:"vco2",t:"s",x:505,y:R1,l:"SYNC",n:["ON","OFF"],d:1,what:"Oscillator sync. VCO 2 is forced to restart its wave every time VCO 1 does. VCO 2 then stays locked to VCO 1's note, and changing VCO 2's pitch changes its tone instead.",tryit:"Turn Sync on, then sweep VCO 2 Pitch. You get a tearing, vocal lead sound. Aim the EG at Pitch 2 to make it happen on every note.",q:"Tap the switch that locks VCO 2's wave cycle to VCO 1."},
+ {id:"ring",s:"vco2",t:"s",x:545,y:R1,l:"RING",n:["ON","OFF"],d:1,sim:1,what:"Ring modulation. The two oscillators are multiplied together and the result replaces VCO 2 in the mixer. It creates new, often dissonant frequencies.",tryit:"Turn Ring on, turn VCO 2 up in the mixer, and move VCO 2 Pitch. Bells, gongs and robot noises live here.",q:"Tap the switch that multiplies the two oscillators for metallic, bell-like tones."},
+ {id:"xmod",s:"vco2",t:"k",x:525,y:R2,l:"CROSS MOD\nDEPTH",d:0,sim:1,what:"Cross modulation. VCO 1 shakes the pitch of VCO 2 at audio speed. Small amounts add growl and edge; large amounts turn into harsh, clangorous noise.",tryit:"Turn VCO 2 up in the mixer and raise this slowly. Stop at the point where it starts to snarl."},
+ // multi
+ {id:"multi",s:"multi",t:"s",x:216,y:R3,l:"",n:["USR","VPM","NOISE"],lab:1,hw:56,d:2,sim:1,what:"Chooses the engine for the digital oscillator. Noise: hiss, for wind, breath and percussion. VPM: FM-style digital tones such as glassy bells and electric pianos. USR: custom oscillators that you load from a computer, 16 slots.",tryit:"Bring up Multi in the mixer and compare the three. In this page's sound demo only Noise is modelled."},
+ {id:"mdisp",s:"multi",t:"d",x:284,y:316,w:104,h:32,l:"",what:"A small text display that names the current Multi Engine type as you turn the Type knob.",tryit:"Turn Type and read the names: High, Low, Peak and Decim for noise; Sin, Saw, Squ, Fat, Air, Decay, Creep and Throat for VPM."},
+ {id:"mtype",s:"multi",t:"k",x:430,y:R3,l:"TYPE",d:0,sim:1,what:"Picks a variation inside the selected engine. Noise has four types, VPM has sixteen, and USR picks one of your loaded oscillators.",tryit:"With Noise selected, step through the four types. Each is the same hiss filtered differently."},
+ {id:"mshape",s:"multi",t:"k",x:525,y:R3,l:"SHAPE",d:.6,sim:1,what:"The main character knob for whichever type is selected: for High and Low noise it sets the filter cutoff, for Peak the bandwidth, for Decim the sample rate, and for VPM the modulation character. In VPM, holding SHIFT while turning sets a second parameter, the ratio offset.",tryit:"On noise, this sweeps it from a dull rumble to a bright hiss."},
+ // mixer
+ {id:"mix1",s:"mixer",t:"k",x:630,y:R1,l:"VCO 1",d:1,sim:1,what:"Level of VCO 1 going into the filter. At zero it is silent.",tryit:"If you hear nothing at all, check here first. All three mixer knobs at zero means silence."},
+ {id:"mix2",s:"mixer",t:"k",x:630,y:R2,l:"VCO 2",d:0,sim:1,what:"Level of VCO 2 going into the filter. When Ring is on, this controls the ring-modulated signal.",tryit:"Fade it up under VCO 1 and listen for the sound getting wider."},
+ {id:"mix3",s:"mixer",t:"k",x:630,y:R3,l:"MULTI",d:0,sim:1,what:"Level of the Multi Engine going into the filter.",tryit:"A little noise mixed under the oscillators adds breath and air to a pad or bite to a snare-like sound.",q:"Tap the knob that brings the Multi Engine (for example noise) into the mix."},
+ // filter
+ {id:"cutoff",s:"filter",t:"k",x:722,y:R1,l:"CUTOFF",d:1,sim:1,what:"The most important knob on the synth. The filter lets low frequencies through and removes everything above the cutoff point. Left is darker and more muffled. Right is brighter and more open.",tryit:"Start the loop and sweep it slowly from one end to the other. That sweep is the sound of half of electronic music.",q:"Tap the knob that makes the sound darker or brighter."},
+ {id:"res",s:"filter",t:"k",x:722,y:R2,l:"RESONANCE",d:0,sim:1,what:"Boosts a narrow band right at the cutoff point. It adds a nasal, whistling emphasis that makes cutoff sweeps much more obvious. Near maximum the filter starts to ring on its own.",tryit:"Set it to about half, then sweep Cutoff again. Hear how the sweep now has a voice-like peak.",q:"Tap the knob that adds a whistling emphasis right at the cutoff point."},
+ {id:"drive",s:"filter",t:"s",x:704,y:R3,l:"DRIVE",n:LMH,d:2,sim:1,what:"Overdrives the signal going into the filter, adding grit, thickness and volume. Three levels: off, 50% and 100%.",tryit:"Great on bass. Switch it in and notice the low end get fuller and slightly dirty.",q:"Tap the switch that adds grit by overdriving the signal into the filter."},
+ {id:"keytrack",s:"filter",t:"s",x:742,y:R3,l:"KEY\nTRACK",n:LMH,d:2,sim:1,what:"Makes the cutoff follow the keyboard, so higher notes get a higher cutoff. Without it, high notes can sound dull because a fixed filter cuts more of them. Three levels: 0%, 50% and 100%.",tryit:"Close Cutoff halfway and play low then high. Then switch to 100% and compare the high notes.",q:"Tap the switch that makes the filter open further as you play higher notes."},
+ // amp eg
+ {id:"aA",s:"ampeg",t:"k",x:820,y:R1,l:"ATTACK",d:0,sim:1,what:"How long a note takes to rise from silence to full volume after you press a key. Zero is instant and punchy. High values fade in slowly.",tryit:"Raise it past halfway and hold a key. The note swells in like a string section.",q:"Tap the knob that controls how quickly a note fades in when you press a key."},
+ {id:"aD",s:"ampeg",t:"k",x:910,y:R1,l:"DECAY",d:.5,sim:1,what:"After the attack peak, how long the volume takes to fall to the Sustain level.",tryit:"With Sustain at zero, Decay alone sets how long each note lasts. Short gives plucks, long gives piano-like notes."},
+ {id:"aS",s:"ampeg",t:"k",x:1000,y:R1,l:"SUSTAIN",d:1,sim:1,what:"The odd one out: a level, not a time. It is the volume a note settles at for as long as you keep the key held.",tryit:"At maximum the note stays at full volume, like an organ. At zero it dies away even if you keep holding, like a plucked string."},
+ {id:"aR",s:"ampeg",t:"k",x:1090,y:R1,l:"RELEASE",d:.15,sim:1,what:"How long the sound takes to fade out after you let go of the key.",tryit:"Short for tight bass lines. Long for pads that hang in the air after you lift your hands.",q:"Tap the knob that sets how long a note rings on after you let go."},
+ // eg
+ {id:"eA",s:"eg",t:"k",x:820,y:R2,l:"ATTACK",d:0,sim:1,what:"How long the second envelope takes to rise to its peak.",tryit:"Usually zero, so the movement hits right at the start of the note."},
+ {id:"eD",s:"eg",t:"k",x:910,y:R2,l:"DECAY",d:.4,sim:1,what:"How long the second envelope takes to fall back to nothing.",tryit:"Aimed at Cutoff, a short decay gives a quick 'bwow' at the start of each note. A longer one gives a slow closing sweep."},
+ {id:"eInt",s:"eg",t:"k",x:1000,y:R2,l:"EG INT",d:.5,sim:1,what:"Intensity: how hard the envelope pushes its target. Center means no effect. To the right it pushes the target up; to the left it pushes it down.",tryit:"Lower Cutoff to about a third, set Target to Cutoff, then turn this to the right. Every note now starts bright and closes down.",q:"Tap the knob that sets how strongly the second envelope pushes its target."},
+ {id:"eTgt",s:"eg",t:"s",x:1090,y:R2,l:"TARGET",n:["PITCH","PITCH 2","CUTOFF"],lab:1,hw:66,d:2,sim:1,what:"What the envelope moves. Pitch: the pitch of VCO 1, VCO 2 and the Multi Engine together, for zaps, kicks and drops. Pitch 2: only VCO 2, which is the classic partner for Sync. Cutoff: the filter, the most common choice.",tryit:"Set EG Int high, Decay short, Target to Pitch. Each note now starts with a laser-like 'pew'."},
+ // lfo
+ {id:"lWave",s:"lfo",t:"s",x:796,y:R3,l:"WAVE",n:WAVES,icons:1,d:1,sim:1,what:"The shape of the LFO's motion. Triangle rises and falls smoothly. Saw ramps one way then snaps back. Square jumps between two values.",tryit:"Aim the LFO at Cutoff and compare: smooth wah, repeating ramp, or on-off gating."},
+ {id:"lMode",s:"lfo",t:"s",x:836,y:R3,l:"MODE",n:["BPM","NORMAL","1-SHOT"],lab:1,hw:62,d:1,sim:1,what:"Normal: the LFO runs freely at the speed set by Rate. BPM: its speed locks to the tempo, and Rate then picks note divisions from 4 bars down to 1/64. 1-Shot: it runs for half a cycle each time you press a key and then stops, so it acts like an extra envelope.",tryit:"Use BPM for wobbles that stay in time with the sequencer."},
+ {id:"lRate",s:"lfo",t:"k",x:925,y:R3,l:"RATE",d:.5,sim:1,what:"How fast the LFO cycles. Slow for gradual sweeps, medium for vibrato and tremolo, fast for buzzing, growling textures.",tryit:"With Int turned up, sweep Rate from slow to fast and hear the wobble turn into a buzz.",q:"Tap the knob that sets how fast the LFO wobbles."},
+ {id:"lInt",s:"lfo",t:"k",x:1005,y:R3,l:"INT",d:0,sim:1,what:"Intensity: how far the LFO moves its target. At zero the LFO does nothing. Hold SHIFT while turning to flip the direction.",tryit:"For natural vibrato on Pitch you need very little. For a filter wobble, go halfway or more."},
+ {id:"lTgt",s:"lfo",t:"s",x:1090,y:R3,l:"TARGET",n:["PITCH","SHAPE","CUTOFF"],lab:1,hw:66,d:2,sim:1,what:"What the LFO moves. Pitch gives vibrato. Shape moves the oscillators' Shape, which on a square wave gives a rich, chorus-like shimmer. Cutoff gives wah and wobble effects. A Program Edit setting, LFO Target OSC, chooses which oscillators Pitch and Shape apply to.",tryit:"Try each target with Int at halfway. Shape is not modelled in this page's sound demo, so try that one on the real thing.",q:"Tap the switch that decides whether the LFO moves pitch, shape or cutoff."},
+ // fx
+ {id:"fxSel",s:"fx",t:"s",x:1185,y:R1,l:"",n:["MOD","REV","DEL"],lab:1,hw:52,d:2,sim:1,what:"Chooses which of the three effects the neighbouring controls edit: Modulation (chorus, ensemble, phaser, flanger), Reverb or Delay. It only chooses what you are editing. All three can be on together.",tryit:"Select each in turn and look at the switch to its right to see whether that effect is on."},
+ {id:"fxOn",s:"fx",t:"s",x:1245,y:R1,l:"",n:["SELECT","ON","OFF"],lab:1,hw:58,d:2,sim:1,what:"Turns the selected effect on or off. Each effect remembers its own on/off state, Time and Depth. Flicking to Select with Mod chosen steps through chorus, ensemble, phaser and flanger. With Delay or Reverb chosen, hold SHIFT while flicking to Select to step through sub-types such as Tape delay or Hall reverb.",tryit:"Turn Delay on, then play short notes and listen to the echoes trail away.",opts:[1,2]},
+ {id:"fxTime",s:"fx",t:"k",x:1325,y:R1,l:"TIME",d:.4,sim:1,what:"The time-related setting of the selected effect: the gap between echoes for delay, the length of the tail for reverb, the speed of movement for modulation.",tryit:"With Delay on, sweep this while notes play. Longer gaps feel spacious, short ones feel like a slapback."},
+ {id:"fxDepth",s:"fx",t:"k",x:1405,y:R1,l:"DEPTH",d:.4,sim:1,what:"How much of the selected effect you hear. For delay and reverb, holding SHIFT while turning sets the wet/dry balance instead.",tryit:"Effects are easy to overdo. Turn it up until you clearly notice it, then back off a little."},
+ // display & edit
+ {id:"disp",s:"prog",t:"d",x:1190,y:192,w:112,h:62,l:"",what:"The main display. It shows the program name and number, the exact value of any knob as you turn it, and a live oscilloscope: a drawing of the waveform you are hearing. If you see no waveform, turn on Oscilloscope in Global Edit.",tryit:"Hold a note and change Wave, Shape and Cutoff. Seeing the wave change is one of the best ways to learn what each control does."},
+ {id:"pv",s:"prog",t:"k",x:1390,y:R2,l:"PROGRAM/VALUE",d:0,what:"In normal play it scrolls through the 500 programs. Numbers 1 to 200 are factory presets, and 201 to 500 start as blank Init programs for your own sounds. Inside menus it changes the selected value.",tryit:"Scroll to program 201 or later to get a plain saw wave with nothing added. That is the best place to learn from."},
+ {id:"edit",s:"prog",t:"b",x:1190,y:305,l:"EDIT\nMODE",what:"Opens the menus for settings that have no knob. Press it repeatedly, or turn Program/Value, to move between Program Edit, Seq Edit and Global Edit, then use buttons 1 to 16 to choose a page.",tryit:"This is where you assign the joystick, name a program and set bend range. Leave it until the front panel feels familiar."},
+ {id:"write",s:"prog",t:"b",x:1250,y:305,l:"WRITE",what:"Saves your sound. Press Write, turn Program/Value to choose a slot, then press Write again. Tweaks you have not saved are lost when you change program.",tryit:"Made something you like? Save it to a slot from 201 upward so you do not overwrite a preset.",q:"Tap the button you press to save a sound you have made."},
+ {id:"exit",s:"prog",t:"b",x:1310,y:305,l:"EXIT",what:"Backs out of a menu or cancels a save.",tryit:"If the panel ever seems to be in a strange state, press Exit until the Edit Mode light goes out."},
+ {id:"shift",s:"prog",t:"b",x:1370,y:305,l:"SHIFT",what:"Hold it to reach second functions on other controls, such as the second parameter on Multi Engine Shape or flipping the direction of LFO Int.",tryit:"Hold Shift and turn Multi Engine Shape to hear its hidden second parameter."},
+ // sequencer
+ {id:"motion",s:"seq",t:"b",x:1190,y:386,l:"MOTION\nMODE",what:"Switches buttons 1 to 16 to motion view. Motion sequencing records knob movements into the sequence, so a filter sweep can replay on its own. Up to four knobs can be recorded per program.",tryit:"While a sequence plays, press Rec and sweep Cutoff for one pass. The sweep now repeats with the pattern."},
+ {id:"play",s:"seq",t:"b",x:1250,y:386,l:"PLAY",sim:1,what:"Starts and stops the sequence stored in the current program.",tryit:"On this page it starts the demo loop. Tap step buttons while it runs to switch demo steps on and off.",q:"Tap the button that starts and stops the sequencer."},
+ {id:"rec",s:"seq",t:"b",x:1310,y:386,l:"REC",what:"Records. Pressed while the sequencer is playing, it records what you play in real time; press it again to pause recording. Pressed while stopped, it enters step recording, where you enter one step at a time with no need to play in time.",tryit:"Step recording is the friendly way in: press Rec, play 16 notes one by one, then press Play."},
+ {id:"rest",s:"seq",t:"b",x:1370,y:386,l:"REST",what:"During step recording, inserts a silent step. Held while entering a note, it ties that note into the next step.",tryit:"Leave a few rests in a pattern. Gaps are what give a sequence its rhythm."},
+ {id:"steps",s:"seq",t:"steps",x:250,y:408,l:"",sim:1,what:"Buttons 1 to 16, one per step of the sequence. During playback they light to show the current step. In step edit a lit button means that step holds a note, and holding a button while playing a key records that note on that step. In Edit Mode the same buttons choose menu pages.",tryit:"On this page, tapping a step switches it on or off in the demo loop. That is a simplification; on the synth you hold the step button and play a key."},
+ // rear
+ {id:"jPh",s:"rear",t:"jack",x:205,l:"PHONES",what:"Headphone socket (6.3 mm stereo)."},
+ {id:"jOut",s:"rear",t:"jack",x:300,l:"OUTPUT L/MONO · R",what:"Main audio outputs. Use both for stereo, which matters for the effects, or only L/Mono for a single cable."},
+ {id:"jDamp",s:"rear",t:"jack",x:420,l:"DAMPER",what:"Socket for a sustain pedal, which holds notes after you release the keys."},
+ {id:"jCv",s:"rear",t:"jack",x:540,l:"CV IN 1–2",what:"Two control voltage inputs. Modular gear can send signals here to move parameters on the synth."},
+ {id:"jSync",s:"rear",t:"jack",x:660,l:"SYNC IN–OUT",what:"Clock pulses for keeping tempo locked with other gear that has sync jacks, such as drum machines and small sequencers."},
+ {id:"jMidi",s:"rear",t:"jack",x:810,l:"MIDI IN–OUT",what:"Standard MIDI sockets for connecting other keyboards, sequencers and sound modules."},
+ {id:"jUsb",s:"rear",t:"jack",x:960,l:"USB",what:"Connects to a computer for MIDI and for the librarian software, which is how you load user oscillators and effects."},
+ {id:"jPow",s:"rear",t:"jack",x:1050,l:"POWER",what:"Power switch. Hold it until the logo appears to turn on, and hold it again to turn off. The synth tunes its analog circuits for about 15 seconds at startup."},
+ {id:"jDc",s:"rear",t:"jack",x:1150,l:"DC 9V",what:"Socket for the included power adapter."}
+];
+const PG={master:15,tempo:15,octave:9,joy:9,porta:15,vmdepth:15,vmode:15,v1wave:16,v1oct:16,v1pitch:16,v1shape:16,v2wave:16,v2oct:16,v2pitch:16,v2shape:16,sync:17,ring:17,xmod:17,multi:17,mdisp:17,mtype:17,mshape:18,mix1:20,mix2:20,mix3:20,cutoff:21,res:21,drive:21,keytrack:21,aA:22,aD:22,aS:22,aR:22,eA:22,eD:22,eInt:22,eTgt:22,lWave:23,lMode:23,lRate:23,lInt:23,lTgt:23,fxSel:24,fxOn:24,fxTime:24,fxDepth:24,disp:9,pv:9,edit:30,write:14,exit:30,shift:47,motion:26,play:11,rec:25,rest:25,steps:28,jPh:6,jOut:6,jDamp:6,jCv:50,jSync:49,jMidi:50,jUsb:50,jPow:7,jDc:6};
+const SPG={global:15,voice:15,vco1:16,vco2:17,multi:17,mixer:20,filter:21,ampeg:22,eg:22,lfo:23,fx:24,prog:9,seq:25,rear:6};
+const MANUAL="https://cdn.korg.com/us/support/download/files/a5bba576f00973bf63c78cdeff83a7f7.pdf";
+const BY={};C.forEach(c=>BY[c.id]=c);
+const INIT={};C.forEach(c=>{if(c.d!==undefined)INIT[c.id]=c.d});
+const S=Object.assign({},INIT);
+const fxState=[false,false,false];
+let steps=[1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1];
+const PATTERN=[36,36,48,36,39,36,46,48,36,36,48,36,43,41,39,34];
+
+const LESSONS=[
+ {t:"The big picture",sec:null,body:`<p>A synthesizer builds sound in stages, and the panel is laid out in the same order, left to right. Sound is <b>made</b>, then <b>blended</b>, then <b>filtered</b>, then <b>shaped in volume</b>, then <b>polished</b>.</p>
+ <div class="flow"><button data-sec="vco1">VCO 1</button><button data-sec="vco2">VCO 2</button><button data-sec="multi">MULTI</button><em>→</em><button data-sec="mixer">MIXER</button><em>→</em><button data-sec="filter">FILTER</button><em>→</em><button data-sec="ampeg">AMP EG</button><em>→</em><button data-sec="fx">EFFECTS</button></div>
+ <p>Two more blocks make no sound themselves. They move other controls for you, which is called modulation.</p>
+ <div class="flow"><button class="mod" data-sec="eg">EG</button><button class="mod" data-sec="lfo">LFO</button><em>move pitch, shape or cutoff</em></div>
+ <p>Tap any block to see where it lives on the panel. On the real synth, turn Program/Value to a program numbered 201 or higher. Those are blank Init programs: one plain saw wave, nothing else. Do every lesson from there.</p>`,
+  tasks:[{t:"Find the knob that picks programs.",id:"pv"},{t:"Press ▶ Loop below the panel so you have sound while you learn.",id:"play"}]},
+ {t:"Oscillators: where sound starts",sec:"vco1",body:`<p>An oscillator produces a steady raw tone. You choose three things about it: its <b>waveform</b> (the basic colour), its <b>octave</b> (how high or low), and its <b>shape</b> (a variation of the waveform).</p><p>Saw is the brightest and the usual starting point. Triangle is the gentlest. Square sits between them with a hollow quality.</p>`,
+  tasks:[{t:"Switch Wave between saw, triangle and square. Watch the display redraw.",id:"v1wave"},{t:"Step Octave from 16′ up to 2′.",id:"v1oct"},{t:"On the real synth, pick Square and sweep Shape.",id:"v1shape"}]},
+ {t:"Two oscillators together",sec:"vco2",body:`<p>One oscillator sounds plain. Two, slightly out of tune with each other, sound wide and alive. That small mismatch is called <b>detune</b> and it is the simplest trick for a bigger sound.</p><p>Sync, Ring and Cross Mod go further by making the oscillators interfere with each other. They are spice: aggressive, metallic and less predictable.</p>`,
+  tasks:[{t:"Turn VCO 2 up in the mixer.",id:"mix2",set:{mix2:.9}},{t:"Nudge VCO 2 Pitch just off center and listen to the slow swirl.",id:"v2pitch",set:{v2pitch:.515}},{t:"Drop VCO 2 Octave to 16′ for instant weight.",id:"v2oct"},{t:"Flip Ring on and move VCO 2 Pitch. Then flip it off again.",id:"ring"}]},
+ {t:"The Multi Engine",sec:"multi",body:`<p>The third sound source is digital, which lets it do things analog oscillators cannot. The switch picks an engine, Type picks a flavour within it, and Shape adjusts that flavour.</p><p><b>Noise</b> is the one you will use first. On its own it is wind and surf. A little under your oscillators adds breath.</p>`,
+  tasks:[{t:"Turn Multi up in the mixer to hear noise.",id:"mix3",set:{mix3:.7}},{t:"Sweep Shape to change the noise colour.",id:"mshape"},{t:"Step through Type.",id:"mtype"},{t:"On the real synth, switch to VPM and explore the sixteen types.",id:"multi"}]},
+ {t:"The Mixer",sec:"mixer",body:`<p>Three volume knobs, one per source. Balance matters more than it seems: a sound made of 100% VCO 1 with 30% VCO 2 an octave below is very different from the reverse.</p><p>It is also the first place to look when there is no sound. Three knobs at zero is silence, whatever else you do.</p>`,
+  tasks:[{t:"Pull VCO 1 to zero and back.",id:"mix1"},{t:"Find a balance of all three that you like.",id:"mix2"}]},
+ {t:"The Filter",sec:"filter",body:`<p>This is where a synth gets its character. The filter is a low-pass: lows pass through, highs are removed. <b>Cutoff</b> sets where the removal begins. <b>Resonance</b> adds a peak right at that point.</p><p>Raw oscillators are bright and a bit harsh. Closing the cutoff rounds them into basses, pads and mellow leads.</p>`,
+  tasks:[{t:"Sweep Cutoff from fully open to nearly closed.",id:"cutoff",set:{cutoff:.4}},{t:"Set Resonance to half and sweep Cutoff again.",id:"res",set:{res:.5}},{t:"Switch Drive to 100% for grit.",id:"drive"},{t:"Try Key Track with a half-closed filter.",id:"keytrack"}]},
+ {t:"Amp EG: the shape of a note",sec:"ampeg",body:`<p>Without an envelope, a note would be a flat on/off switch. The Amp EG draws a volume curve for every key press in four stages: <b>Attack</b> (rise), <b>Decay</b> (fall to a holding level), <b>Sustain</b> (that holding level) and <b>Release</b> (fade after you let go).</p><p>Three are times and one, Sustain, is a level. Mixing those up is the most common beginner confusion.</p>`,
+  tasks:[{t:"Pluck: Sustain to zero, Decay around a third.",id:"aS",set:{aS:0,aD:.3}},{t:"Swell: raise Attack past half and hold a key.",id:"aA",set:{aA:.55,aS:1}},{t:"Raise Release and hear notes hang on after you let go.",id:"aR",set:{aR:.6,aA:0}}]},
+ {t:"The second envelope",sec:"eg",body:`<p>The EG is the same idea as the Amp EG, but instead of volume you aim it at something else with the Target switch. It has only Attack and Decay, so it produces a quick movement at the start of each note.</p><p>Aimed at <b>Cutoff</b>, each note begins bright and then mellows, which is how plucks, brass stabs and punchy basses get their snap. <b>EG Int</b> sets how big the movement is, and its center position means none.</p>`,
+  tasks:[{t:"Lower Cutoff to about a third so there is room to move.",id:"cutoff",set:{cutoff:.3}},{t:"Turn EG Int to the right.",id:"eInt",set:{eInt:.85,eTgt:2}},{t:"Change Decay and hear the snap get shorter or longer.",id:"eD"},{t:"Switch Target to Pitch for a laser effect.",id:"eTgt"}]},
+ {t:"The LFO: automatic movement",sec:"lfo",body:`<p>An LFO does what your hand would do if you wiggled a knob back and forth forever. You choose the shape of the wiggle (<b>Wave</b>), its speed (<b>Rate</b>), its size (<b>Int</b>) and which control it moves (<b>Target</b>).</p><p>Envelope or LFO? An envelope happens once per note. An LFO keeps repeating.</p>`,
+  tasks:[{t:"Target Cutoff, Int around half: a repeating wah.",id:"lInt",set:{lInt:.5,lTgt:2,cutoff:.4,eInt:.5}},{t:"Sweep Rate from slow to fast.",id:"lRate"},{t:"Switch Mode to BPM so the wobble locks to the loop.",id:"lMode"},{t:"Target Pitch with a small Int: vibrato.",id:"lTgt"}]},
+ {t:"Effects",sec:"fx",body:`<p>Effects come last and treat the finished sound. <b>Delay</b> repeats it as echoes. <b>Reverb</b> places it in a room or hall. <b>Mod</b> effects such as chorus thicken it by blending in shifting copies.</p><p>The left switch picks which effect you are editing. The right switch turns that one on or off. Time and Depth then apply to it.</p>`,
+  tasks:[{t:"Select Del on the left switch.",id:"fxSel"},{t:"Turn it on with the right switch.",id:"fxOn"},{t:"Adjust Time and Depth.",id:"fxTime"},{t:"Select Rev, turn that on too, and hear both together.",id:"fxSel"}]},
+ {t:"Voices and performance",sec:"voice",body:`<p>Four voices means four notes at once in Poly mode. The Voice Mode switch can spend those four voices differently: all on one note (<b>Unison</b>) for a massive lead or bass, as a ready-made <b>Chord</b> from one key, or one after another as an <b>Arpeggio</b>.</p><p>Voice Mode Depth changes meaning with the mode, which makes it worth revisiting each time you switch. Portamento, Octave and the joystick are your expressive controls while playing.</p>`,
+  tasks:[{t:"Read what each mode does.",id:"vmode"},{t:"Read how Depth changes per mode.",id:"vmdepth"},{t:"Add a little Portamento and listen to the loop glide.",id:"porta",set:{porta:.35}}]},
+ {t:"Sequencer, saving and menus",sec:"seq",body:`<p>Every program carries its own 16-step sequence. The easiest way in is <b>step recording</b>: with the sequencer stopped press Rec, play notes one at a time (Rest for a gap), then press Play. To change one step later, hold its button and play a new key.</p><p>When you make a sound you like, <b>Write</b> saves it: press Write, choose a slot with Program/Value, press Write again. Edit Mode holds the deeper settings and can wait until the front panel feels like home.</p>`,
+  tasks:[{t:"Press Play on the panel drawing, then tap step buttons.",id:"play"},{t:"Learn the Rec button's two behaviours.",id:"rec"},{t:"Learn how Write works.",id:"write"}]}
+];
+
+const RECIPES=[
+ {n:"Init",sub:"Blank slate",set:{},why:[{id:"v1wave",t:"One saw wave, filter wide open, organ-style envelope. Every recipe below starts from here."}]},
+ {n:"Round bass",sub:"Warm and solid",set:{v1wave:2,v1oct:0,v2oct:0,mix2:.6,cutoff:.34,res:.15,drive:0,eInt:.72,eD:.3,eTgt:2,aD:.4,aS:.6,aR:.1,tempo:.3},why:[
+  {id:"v1oct",t:"Both oscillators at 16′ put the sound in bass territory."},{id:"v1wave",t:"Square on VCO 1 plus saw on VCO 2: hollow body with some buzz on top."},{id:"cutoff",t:"Cutoff low removes the fizz so only weight remains."},{id:"eInt",t:"The EG opens the filter briefly on each note so it still has a clear start."},{id:"drive",t:"Drive thickens the low end."}]},
+ {n:"Pluck",sub:"Short and snappy",set:{cutoff:.26,res:.3,eInt:.88,eD:.26,eTgt:2,aD:.32,aS:0,aR:.25,octave:3,fxSel:2,fx:[0,0,1],fxTime:.42,fxDepth:.35},why:[
+  {id:"aS",t:"Sustain at zero: the note dies away on its own even if you hold the key."},{id:"aD",t:"Decay sets how long each pluck lasts."},{id:"eInt",t:"The EG snaps the filter open then shut, which is the 'pluck' itself."},{id:"fxOn",t:"Delay fills the gaps between short notes."}]},
+ {n:"Slow pad",sub:"Soft, wide, patient",set:{mix2:.85,v2pitch:.512,cutoff:.46,res:.1,aA:.58,aD:.6,aS:.8,aR:.62,lWave:1,lRate:.22,lInt:.18,lTgt:2,octave:3,fxSel:1,fx:[1,1,0],fxTime:.7,fxDepth:.55,tempo:.1},why:[
+  {id:"v2pitch",t:"Two saws slightly detuned give the width."},{id:"aA",t:"Long Attack fades each note in."},{id:"aR",t:"Long Release lets notes overlap as you change chords."},{id:"lInt",t:"A slow, gentle LFO on Cutoff keeps the sound from sitting still."},{id:"fxOn",t:"Reverb and chorus add space. On the real synth, play this in Poly with full chords."}]},
+ {n:"Singing lead",sub:"Glide and vibrato",set:{v1wave:2,mix2:.5,v2oct:2,cutoff:.62,res:.25,porta:.32,lWave:1,lRate:.63,lInt:.14,lTgt:0,aR:.3,octave:3,keytrack:1,fxSel:2,fx:[0,0,1],fxTime:.5,fxDepth:.3},why:[
+  {id:"porta",t:"Portamento slides between notes like a voice."},{id:"lTgt",t:"LFO on Pitch at a small amount is vibrato."},{id:"v2oct",t:"VCO 2 an octave up adds a bright edge that cuts through."},{id:"keytrack",t:"Key Track keeps high notes from going dull."}]},
+ {n:"Wobble bass",sub:"LFO in time",set:{v1oct:0,mix2:.7,v2wave:2,v2oct:0,cutoff:.3,res:.55,drive:0,lWave:1,lMode:0,lRate:.5,lInt:.62,lTgt:2,aR:.1,tempo:.42},why:[
+  {id:"lMode",t:"BPM mode locks the LFO to the tempo."},{id:"lTgt",t:"Target Cutoff: the LFO opens and closes the filter for you."},{id:"res",t:"Resonance makes each wobble speak."},{id:"lRate",t:"Change Rate to pick the division: slow lurches or fast chatter."}]},
+ {n:"Zap",sub:"Pitch envelope",set:{v1wave:1,eTgt:0,eInt:.97,eD:.2,aD:.3,aS:0,aR:.2,mix3:.25,mshape:.8,octave:3},why:[
+  {id:"eTgt",t:"EG aimed at Pitch: each note starts high and drops fast."},{id:"eD",t:"Decay sets the drop speed. Shorter gives a click, longer gives a 'pew'."},{id:"mix3",t:"A touch of noise adds a snap. This is how synth kicks and toms are made."}]},
+ {n:"Bell",sub:"Ring modulation",set:{v1wave:1,v2wave:1,ring:0,v2pitch:.69,mix1:.5,mix2:.9,aD:.55,aS:0,aR:.55,octave:3,fxSel:1,fx:[0,1,0],fxTime:.75,fxDepth:.5,tempo:.15},why:[
+  {id:"ring",t:"Ring multiplies the two oscillators, creating tones that are not in either one."},{id:"v2pitch",t:"VCO 2 tuned to an odd interval makes it clang. Move it to find other bells."},{id:"aS",t:"No Sustain and a long Decay: struck, then fading."},{id:"fxOn",t:"Reverb gives the bell a room to ring in."}]}
+];
+
+const MCQ=[
+ {q:"Which order does the sound travel in?",a:"Oscillators → Mixer → Filter → Amp → Effects",w:["Filter → Oscillators → Mixer → Effects → Amp","Mixer → Effects → Oscillators → Filter → Amp","Amp → Filter → Oscillators → Mixer → Effects"],e:"The panel is laid out in the same order, left to right.",id:"mix1"},
+ {q:"Sustain is different from Attack, Decay and Release because…",a:"it is a level, and the other three are times",w:["it only works in Unison mode","it controls the filter and the others control volume","it is measured in octaves"],e:"Sustain is the volume a held note settles at.",id:"aS"},
+ {q:"You want a pad that fades in slowly. Which setting matters most?",a:"A long Amp EG Attack",w:["High Resonance","A fast LFO Rate","Drive at 100%"],e:"Attack is the time a note takes to reach full volume.",id:"aA"},
+ {q:"For a short pluck that dies away while you still hold the key, set…",a:"Attack at zero, short Decay, Sustain at zero",w:["Long Attack, Sustain at maximum","Sustain at maximum, long Release","Attack and Release both at maximum"],e:"With Sustain at zero, Decay alone decides how long the note lasts.",id:"aD"},
+ {q:"A small amount of LFO aimed at Pitch gives you…",a:"vibrato",w:["a louder sound","a longer release","more voices"],e:"A gentle, repeating pitch wobble is vibrato.",id:"lTgt"},
+ {q:"The LFO aimed at Cutoff gives you…",a:"a repeating wah or wobble",w:["a pitch slide between notes","a chord from one key","echoes"],e:"The LFO opens and closes the filter over and over.",id:"lTgt"},
+ {q:"Which waveform is the brightest and buzziest?",a:"Saw",w:["Triangle","Square","They are all equally bright"],e:"The saw contains the most harmonics, so it gives the filter the most to work with.",id:"v1wave"},
+ {q:"On the Octave switches, which setting is the lowest?",a:"16′",w:["2′","4′","8′"],e:"The numbers are organ pipe lengths. Longer pipes make lower notes.",id:"v1oct"},
+ {q:"You press keys and hear nothing. Master is up. What do you check first?",a:"The three Mixer knobs",w:["The LFO Rate","The Tempo knob","The Portamento knob"],e:"If all three sources are at zero, nothing reaches the filter.",id:"mix1"},
+ {q:"What does Resonance do?",a:"Emphasises frequencies right at the cutoff point",w:["Adds echoes","Makes notes glide","Raises the pitch by an octave"],e:"It is a boost at the cutoff frequency, which makes sweeps more vocal.",id:"res"},
+ {q:"What does Unison mode do?",a:"Stacks all four voices on a single note",w:["Plays a chord from one key","Plays held notes one after another","Turns off the filter"],e:"Four voices on one note gives a thick mono sound, and Depth detunes them.",id:"vmode"},
+ {q:"EG Int is at its center position. What happens?",a:"The EG has no effect on its target",w:["The EG is at full strength","The filter closes completely","The note is silent"],e:"Center is zero. Right pushes the target up, left pushes it down.",id:"eInt"},
+ {q:"EG Target is set to Pitch 2. What does the envelope move?",a:"Only the pitch of VCO 2",w:["The pitch of both oscillators","The filter cutoff","The second reverb"],e:"It is the classic partner for Sync, where sweeping VCO 2 changes its tone.",id:"eTgt"},
+ {q:"How do you save a sound?",a:"Press Write, choose a slot, press Write again",w:["Press Exit twice","Hold Shift and press Play","Turn Master fully down"],e:"Unsaved changes are lost when you switch programs.",id:"write"},
+ {q:"What does an LFO in 1-Shot mode do?",a:"Runs half a cycle per key press, then stops",w:["Runs in time with the tempo","Runs at double speed","Affects only one voice"],e:"That makes it behave like an extra envelope.",id:"lMode"},
+ {q:"How many notes can sound at once in Poly mode?",a:"Four",w:["One","Eight","Sixteen"],e:"The synth has four voices.",id:"vmode"},
+ {q:"What is the difference between an envelope and an LFO?",a:"An envelope happens once per note; an LFO keeps repeating",w:["An envelope is digital; an LFO is analog","An envelope changes pitch; an LFO changes volume","There is no difference"],e:"Both move other controls. One is a single shape, the other a cycle.",id:"lRate"},
+ {q:"Slightly detuning VCO 2 against VCO 1 makes the sound…",a:"thicker, with a slow swirl",w:["quieter","shorter","an octave lower"],e:"Two nearly identical pitches beat against each other.",id:"v2pitch"}
+];
+
+/* ---------- panel drawing ---------- */
+const NS="http://www.w3.org/2000/svg", svg=document.getElementById("panel");
+function swGeom(c){const n=c.n.length,h=(n>=4&&!c.ledcol)?62:50;return{n,h,ys:c.n.map((_,i)=>c.y-h/2+9+i*(h-18)/(n-1))}}
+const ICON=["M0,3 L8,-3 V3","M0,3 L4,-3 L8,3","M0,3 V-3 H4 V3 H8"];
+function lblLines(txt,x,y,cls){return txt.split("\n").map((s,i)=>`<text class="${cls}" x="${x}" y="${y+i*11}">${s}</text>`).join("")}
+function build(){
+ let h=`<defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b2d30"/><stop offset=".65" stop-color="#232527"/><stop offset="1" stop-color="#1b1c1e"/></linearGradient>
+<radialGradient id="kg" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#565a5e"/><stop offset=".55" stop-color="#2c2e31"/><stop offset="1" stop-color="#151617"/></radialGradient>
+<radialGradient id="lv" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#c9ccce"/><stop offset="1" stop-color="#7c8084"/></radialGradient>
+<linearGradient id="wk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9eaeb"/><stop offset=".85" stop-color="#fbfbfb"/><stop offset="1" stop-color="#c4c6c8"/></linearGradient>
+<linearGradient id="bkg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1d1f"/><stop offset=".88" stop-color="#2c2e30"/><stop offset="1" stop-color="#0a0a0b"/></linearGradient></defs>
+<rect class="lip" x="8" y="40" width="1444" height="654" rx="16"/><rect class="chassis" x="8" y="6" width="1444" height="674" rx="14"/><g id="hl"></g>`;
+ [[90,52],[700,52],[1250,52],[1400,52],[700,448],[1250,448],[90,448],[1400,448]].forEach(p=>h+=`<circle class="screw" cx="${p[0]}" cy="${p[1]}" r="4"/>`);
+ h+=`<rect class="well" x="84" y="472" width="1292" height="196" rx="3"/>`;
+ {const W=[0,2,4,5,7,9,11],kw=58.2,x0=90;
+  for(let i=0;i<22;i++)h+=`<rect class="key w" data-n="${36+Math.floor(i/7)*12+W[i%7]}" x="${(x0+i*kw).toFixed(1)}" y="476" width="${kw-1.6}" height="186" rx="2"/>`;
+  for(let i=0;i<21;i++)if([0,1,3,4,5].includes(i%7))h+=`<rect class="key bk" data-n="${36+Math.floor(i/7)*12+W[i%7]+1}" x="${(x0+(i+1)*kw-17).toFixed(1)}" y="476" width="34" height="116" rx="2"/>`;}
+ [106,196,585,675,770,1160].forEach(x=>h+=`<line class="div" x1="${x}" y1="64" x2="${x}" y2="${x<300?398:392}"/>`);
+ [["VCO 1",388,74],["VCO 2",388,182],["MULTI ENGINE",345,296],["MIXER",630,74],["FILTER",722,74],["AMP EG",955,74],["EG",955,182],["LFO",965,296],["EFFECTS",1365,74]]
+  .forEach(s=>h+=`<text class="sect" x="${s[1]}" y="${s[2]}">${s[0]}</text>`);
+ h+=`<text class="lbl" x="1300" y="292">— EDIT —</text><text class="lbl" x="1300" y="374">— SEQUENCER —</text>`;
+ for(let g=0;g<4;g++)h+=`<line class="div" x1="${250+g*220}" y1="400" x2="${250+g*220+212}" y2="400"/>`;
+ C.forEach(c=>{
+  const a=`class="ctl ${c.t}${c.t==="b"?" btn":""}" data-id="${c.id}" tabindex="0" role="button" aria-label="${(c.l||c.id).replace("\n"," ")}"`;
+  if(c.t==="k"){
+   h+=`<g ${a}><ellipse class="shadow" cx="${c.x+3}" cy="${c.y+11}" rx="23" ry="21"/><circle class="kside" cx="${c.x}" cy="${c.y+5}" r="21"/><circle class="body" cx="${c.x}" cy="${c.y}" r="20"/>${c.id==="pv"?"":`<line class="ptr" id="p-${c.id}" x1="${c.x}" y1="${c.y-6}" x2="${c.x}" y2="${c.y-18}"/>`}<circle class="hit" cx="${c.x}" cy="${c.y}" r="31"/>${lblLines(c.l,c.x,c.y+38,"lbl")}</g>`;
+  }else if(c.t==="s"&&c.o==="h"){
+   h+=`<g ${a}><rect class="hit" x="${c.x-40}" y="${c.y-36}" width="80" height="70"/>`;
+   c.n.forEach((_,i)=>h+=`<circle class="led" id="l-${c.id}-${i}" cx="${c.x-32+i*16}" cy="${c.y-24}" r="3.2"/>`);
+   h+=`<rect class="body" x="${c.x-30}" y="${c.y-7}" width="60" height="14" rx="7"/><circle class="lever" id="p-${c.id}" cx="${c.x}" cy="${c.y}" r="6.5"/>${lblLines(c.l,c.x,c.y+26,"lbl")}</g>`;
+  }else if(c.t==="s"){
+   const g=swGeom(c),hw=c.hw||30;
+   h+=`<g ${a}><rect class="hit" x="${c.x-14}" y="${c.y-g.h/2-6}" width="${hw+10}" height="${g.h+28}"/><rect class="body" x="${c.x-7}" y="${c.y-g.h/2}" width="14" height="${g.h}" rx="7"/><circle class="lever" id="p-${c.id}" cx="${c.x}" cy="${c.y}" r="6.5"/>`;
+   g.ys.forEach((y,i)=>{
+    if(c.icons)h+=`<path class="icon" d="${ICON[i]}" transform="translate(${c.x+12},${y})"/>`;
+    if(c.ledcol)h+=`<circle class="led" id="l-${c.id}-${i}" cx="${c.x+22}" cy="${c.y-21+i*14}" r="3.2"/>`;
+    if(c.lab){let tx=c.x+13;if(c.leds){h+=`<circle class="led" id="l-${c.id}-${i}" cx="${c.x+16}" cy="${y}" r="3.2"/>`;tx=c.x+23}
+     h+=`<text class="pos" x="${tx}" y="${y+3}">${c.n[i]}</text>`}
+   });
+   if(c.l)h+=lblLines(c.l,c.x,c.y+(c.ledcol?40:g.h/2+15),"lbl");
+   h+=`</g>`;
+  }else if(c.t==="b"){
+   h+=`<g ${a} id="b-${c.id}"><rect class="hit" x="${c.x-4}" y="${c.y-6}" width="60" height="50"/><rect class="body" x="${c.x}" y="${c.y}" width="52" height="20" rx="3"/>${lblLines(c.l,c.x+26,c.y+33,"lbl")}</g>`;
+  }else if(c.t==="d"){
+   h+=`<g ${a}><rect class="body" x="${c.x}" y="${c.y}" width="${c.w}" height="${c.h}" rx="4"/>`;
+   if(c.id==="disp")h+=`<text class="dname" id="dname" x="${c.x+7}" y="${c.y+13}">201 INIT</text><polyline id="scope" points=""/>`;
+   else h+=`<text class="dname" id="mname" x="${c.x+c.w/2}" y="${c.y+20}" text-anchor="middle">NOISE</text>`;
+   h+=`</g>`;
+  }else if(c.t==="j"){
+   h+=`<g ${a}><circle class="hit" cx="${c.x}" cy="${c.y}" r="32"/><circle class="kside" cx="${c.x}" cy="${c.y}" r="27"/><circle class="shadow" cx="${c.x+2}" cy="${c.y+5}" r="12"/><circle class="body" cx="${c.x}" cy="${c.y}" r="10"/></g>`;
+  }else if(c.t==="steps"){
+   for(let i=0;i<16;i++)h+=`<g class="ctl step" data-id="steps" data-i="${i}" id="st-${i}" tabindex="0" role="button" aria-label="Step ${i+1}"><rect class="hit" x="${c.x+i*55}" y="${c.y-6}" width="55" height="34"/><rect class="body" x="${c.x+i*55}" y="${c.y}" width="50" height="20" rx="3"/></g>`;
+  }else if(c.t==="jack"){
+   const w=c.l.length*6.2+14;
+   h+=`<g ${a}><rect class="hit" x="${c.x-w/2}" y="12" width="${w}" height="26"/><text class="jackt" x="${c.x}" y="30">${c.l}</text></g>`;
+  }
+ });
+ svg.innerHTML=h;
+ C.forEach(c=>upd(c.id));drawSteps();
+}
+function upd(id){
+ const c=BY[id],v=S[id];if(v===undefined)return;
+ const p=document.getElementById("p-"+id);
+ if(c.t==="k"){if(p)p.setAttribute("transform",`rotate(${-150+v*300} ${c.x} ${c.y})`)}
+ else if(c.t==="s"){
+  if(c.o==="h")p.setAttribute("cx",c.x-22+v*11);
+  else p.setAttribute("cy",swGeom(c).ys[v]);
+  c.n.forEach((_,i)=>{const l=document.getElementById(`l-${id}-${i}`);if(l)l.classList.toggle("lit",i===v)});
+ }
+ if(id==="multi"||id==="mtype"){
+  const e=["USER","VPM",["HIGH","LOW","PEAK","DECIM"][Math.min(3,Math.floor(S.mtype*4))]][S.multi];
+  document.getElementById("mname").textContent=e;
+ }
+}
+function drawSteps(cur){for(let i=0;i<16;i++){const e=document.getElementById("st-"+i);e.classList.toggle("on",!!steps[i]);e.classList.toggle("cur",i===cur)}}
+
+/* ---------- state + selection ---------- */
+let mode="explore", sel="cutoff", secSel="filter";
+const insp=document.getElementById("insp"), pane=document.getElementById("pane"), scroller=document.getElementById("scroller");
+function setVal(id,v,quiet){
+ if(id==="fxOn"){fxState[S.fxSel]=(v===1)}
+ S[id]=v;
+ if(id==="fxSel"){S.fxOn=fxState[v]?1:2;upd("fxOn")}
+ upd(id);apply();
+ if(!quiet&&sel===id)syncWidget();
+ if(!quiet&&sel==="fxOn"&&id==="fxSel")renderInsp();
+}
+function hlSection(s){
+ secSel=s;
+ document.getElementById("hl").innerHTML=s?SECS[s].rects.map(r=>`<rect class="hl" x="${r[0]}" y="${r[1]}" width="${r[2]}" height="${r[3]}" rx="8"/>`).join(""):"";
+ document.querySelectorAll("#chips button").forEach(b=>b.classList.toggle("on",b.dataset.sec===s));
+}
+function scrollToX(x){
+ const w=scroller.clientWidth,sw=scroller.scrollWidth;if(sw<=w+2)return;
+ scroller.scrollTo({left:Math.max(0,x/1460*sw-w/2)});
+}
+function select(id,opts){
+ opts=opts||{};sel=id;const c=BY[id];
+ svg.querySelectorAll(".ctl.sel").forEach(e=>e.classList.remove("sel"));
+ svg.querySelectorAll(`.ctl[data-id="${id}"]`).forEach(e=>e.classList.add("sel"));
+ if(mode!=="quiz"){hlSection(c.s);if(opts.scroll!==false)scrollToX(c.x)}
+ renderInsp();
+ if(mode==="explore")renderPane();
+ refreshAsk();
+}
+function fmt(id,v){if(id==="tempo")return (56+v*184).toFixed(0)+" BPM";
+ if(id==="v1pitch"||id==="v2pitch"){const c=Math.round((v-.5)*2400);return (c>0?"+":"")+c+" ¢"}
+ if(id==="eInt"){const p=Math.round((v-.5)*200);return (p>0?"+":"")+p+"%"}
+ return String(Math.round(v*1023))}
+function renderInsp(){
+ const c=BY[sel];if(!c){insp.innerHTML="";return}
+ let h=`<div class="eyebrow">${SECS[c.s].name}</div><h2>${(c.l||({joy:"Joystick",vmode:"Voice mode",multi:"Engine select",mdisp:"Type display",fxSel:"Effect select",fxOn:"Effect on / off",disp:"Display",steps:"Buttons 1–16"})[c.id]||c.id).replace("\n"," ")}</h2><p>${c.what}</p>`;
+ if(c.t==="k"&&S[c.id]!==undefined)h+=`<div class="valrow"><input type="range" id="w-range" min="0" max="1000" value="${Math.round(S[c.id]*1000)}" aria-label="${c.l.replace("\n"," ")} value"><div class="readout" id="w-read">${fmt(c.id,S[c.id])}</div></div>`;
+ if(c.t==="s"){h+=`<div class="seg" id="w-seg">`+c.n.map((n,i)=>(c.opts&&!c.opts.includes(i))?"":`<button type="button" data-v="${i}" class="${S[c.id]===i?"on":""}">${n}</button>`).join("")+`</div>`;
+  if(c.id==="fxOn")h+=`<p class="small mute">Editing: ${["Mod (chorus)","Reverb","Delay"][S.fxSel]}</p>`}
+ if(c.tryit)h+=`<p class="try"><b>Try it.</b> ${c.tryit}</p>`;
+ if(PG[c.id])h+=`<p class="note">Owner's manual, p. ${PG[c.id]}${c.s==="fx"?" (effects list, p. 53)":""}</p>`;
+ if(c.s!=="rear"&&c.t!=="jack"&&!c.sim)h+=`<p class="note">This control is explained here but not modelled in the page's sound demo. Try it on the real synth.</p>`;
+ insp.innerHTML=h;
+}
+function syncWidget(){
+ const c=BY[sel];if(!c)return;
+ const r=document.getElementById("w-range");if(r){r.value=Math.round(S[sel]*1000);document.getElementById("w-read").textContent=fmt(sel,S[sel])}
+ const sg=document.getElementById("w-seg");if(sg)sg.querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.v===S[sel]));
+}
+insp.addEventListener("input",e=>{if(e.target.id==="w-range"){S[sel]=e.target.value/1000;upd(sel);apply();document.getElementById("w-read").textContent=fmt(sel,S[sel])}});
+insp.addEventListener("click",e=>{const b=e.target.closest("#w-seg button");if(b){initAudio();setVal(sel,+b.dataset.v);renderInsp()}});
+
+/* panel interaction */
+function onCtl(g){
+ const id=g.dataset.id,c=BY[id];
+ if(mode==="quiz"&&quiz.cur&&quiz.cur.find&&!quiz.answered){answerFind(id);return}
+ initAudio();
+ if(id==="steps"){const i=+g.dataset.i;steps[i]=steps[i]?0:1;drawSteps()}
+ else if(id==="play"){toggleLoop()}
+ else if(c.t==="s"&&sel===id){ // tap again to step
+  const order=c.opts||c.n.map((_,i)=>i);setVal(id,order[(order.indexOf(S[id])+1)%order.length]);
+ }
+ select(id,{scroll:false});
+}
+svg.addEventListener("click",e=>{const g=e.target.closest(".ctl");if(g&&!(g.classList.contains("k")&&mode!=="quiz"))onCtl(g)});
+svg.addEventListener("keydown",e=>{const g=e.target.closest(".ctl");if(!g)return;
+ if(e.key==="Enter"||e.key===" "){e.preventDefault();onCtl(g)}
+ else if(g.classList.contains("k")&&S[g.dataset.id]!==undefined&&mode!=="quiz"&&["ArrowUp","ArrowRight","ArrowDown","ArrowLeft"].includes(e.key)){e.preventDefault();
+  const id=g.dataset.id,d=(e.key==="ArrowUp"||e.key==="ArrowRight")?.02:-.02;S[id]=Math.min(1,Math.max(0,S[id]+d));upd(id);apply();if(sel!==id)select(id,{scroll:false});else syncWidget()}});
+// direct manipulation: drag a knob to turn it, press keys to play
+let drag=null,keyEl=null;
+function releaseKey(){if(keyEl){keyEl.classList.remove("down");keyEl=null;keyDown=false;noteOff()}}
+svg.addEventListener("touchstart",e=>{if(e.target.closest(".key")||(mode!=="quiz"&&e.target.closest(".ctl.k")))e.preventDefault()},{passive:false});
+svg.addEventListener("pointerdown",e=>{
+ const key=e.target.closest(".key");
+ if(key){releaseKey();keyEl=key;key.classList.add("down");keyDown=true;noteOn(+key.dataset.n+(S.octave-2)*12);return}
+ const g=e.target.closest(".ctl.k");if(!g||mode==="quiz")return;
+ const id=g.dataset.id;initAudio();if(sel!==id)select(id,{scroll:false});
+ if(S[id]===undefined)return;
+ drag={id,x:e.clientX,y:e.clientY,v:S[id]};try{svg.setPointerCapture(e.pointerId)}catch(_){}
+});
+svg.addEventListener("pointermove",e=>{if(!drag)return;const v=Math.min(1,Math.max(0,drag.v+((drag.y-e.clientY)+(e.clientX-drag.x))/170));S[drag.id]=v;upd(drag.id);apply();if(sel===drag.id)syncWidget()});
+["pointerup","pointercancel"].forEach(ev=>window.addEventListener(ev,()=>{drag=null;releaseKey();if(A.ctx&&A.ctx.state==="suspended")A.ctx.resume()}));
+
+/* ---------- panes ---------- */
+const store={get(k,d){try{const v=localStorage.getItem("xdguide-"+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("xdguide-"+k,JSON.stringify(v))}catch(e){}}};
+let lessonI=store.get("lesson",0), done=store.get("done",[]), recipeI=0;
+function ctlName(c){return (c.l||({joy:"Joystick",vmode:"Mode switch",multi:"Engine switch",mdisp:"Type display",fxSel:"Effect select",fxOn:"On / off",disp:"Display",steps:"Buttons 1–16"})[c.id]).replace("\n"," ")}
+function renderPane(){
+ if(mode==="explore"){
+  const s=SECS[secSel]||SECS.filter;
+  pane.innerHTML=`<div class="card"><div class="eyebrow">Section · manual p. ${SPG[secSel]||21}</div><h2>${s.name}</h2><p>${s.blurb}</p><ul class="list">`+
+   C.filter(c=>c.s===secSel).map(c=>`<li><button type="button" data-id="${c.id}" class="${c.id===sel?"on":""}"><b>${ctlName(c)}</b><span>${c.what.split(". ")[0].replace(/\.$/,"")}.</span></button></li>`).join("")+
+   `</ul><p class="note">Drag a knob on the synth to turn it, or use the slider in the detail card. Tap a switch again to step it, and press the keys to play.</p></div>`;
+ }else if(mode==="lessons"){
+  const L=LESSONS[lessonI];
+  pane.innerHTML=`<div class="card"><div class="stepper">`+LESSONS.map((l,i)=>`<button type="button" data-l="${i}" class="${i===lessonI?"on":""} ${done.includes(i)?"done":""}" aria-label="Lesson ${i+1}: ${l.t}">${done.includes(i)&&i!==lessonI?"✓":i+1}</button>`).join("")+
+   `</div><div class="eyebrow">Lesson ${lessonI+1} of ${LESSONS.length}${L.sec?" · manual p. "+SPG[L.sec]:""}</div><h2>${L.t}</h2>${L.body}<h3>Try it</h3><ul class="tasks num">`+
+   L.tasks.map((t,i)=>`<li><button type="button" data-task="${i}"><i>${i+1}</i><span>${t.t}</span></button></li>`).join("")+
+   `</ul><div class="rowbtns"><button class="btn" type="button" id="l-prev" ${lessonI===0?"disabled":""}>Back</button><button class="btn primary" type="button" id="l-next">${lessonI===LESSONS.length-1?"Finish → Recipes":"Done, next lesson"}</button><button class="btn" type="button" id="l-reset">Reset sound</button></div></div>`;
+ }else if(mode==="recipes"){
+  const r=RECIPES[recipeI];
+  pane.innerHTML=`<div class="card"><div class="eyebrow">Combine what you know</div><h2>Patch recipes</h2><p>Each recipe sets the panel for you. Read why each setting is there, then copy it onto the real synth starting from an Init program.</p><div class="recipes">`+
+   RECIPES.map((x,i)=>`<button type="button" data-r="${i}" class="${i===recipeI?"on":""}"><b>${x.n}</b><span>${x.sub}</span></button>`).join("")+
+   `</div><h3>${r.n}: why it works</h3><ul class="tasks">`+r.why.map((w,i)=>`<li><button type="button" data-why="${w.id}"><i>${ctlName(BY[w.id])}</i><span>${w.t}</span></button></li>`).join("")+
+   `</ul><p class="note">Now change one thing at a time and listen. Recipes are starting points.</p></div>`;
+ }else renderQuiz();
+}
+function applyPatch(set){
+ Object.assign(S,INIT);fxState.fill(false);
+ for(const k in set){if(k==="fx")set.fx.forEach((v,i)=>fxState[i]=!!v);else S[k]=set[k]}
+ S.fxOn=fxState[S.fxSel]?1:2;
+ C.forEach(c=>upd(c.id));apply(true);
+}
+pane.addEventListener("click",e=>{
+ const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.id){select(b.dataset.id)}
+ else if(b.dataset.sec){hlSection(b.dataset.sec);scrollToX(SECS[b.dataset.sec].rects[0][0]+SECS[b.dataset.sec].rects[0][2]/2)}
+ else if(b.dataset.l!==undefined){goLesson(+b.dataset.l)}
+ else if(b.dataset.task!==undefined){const t=LESSONS[lessonI].tasks[+b.dataset.task];initAudio();if(t.set){for(const k in t.set)setVal(k,t.set[k],true)}select(t.id);scroller.scrollIntoView({block:"nearest"})}
+ else if(b.id==="l-prev"){goLesson(lessonI-1)}
+ else if(b.id==="l-next"){if(!done.includes(lessonI)){done.push(lessonI);store.set("done",done)}
+  if(lessonI===LESSONS.length-1){setMode("recipes")}else goLesson(lessonI+1)}
+ else if(b.id==="l-reset"){applyPatch({});setName("201 INIT");renderInsp()}
+ else if(b.dataset.r!==undefined){recipeI=+b.dataset.r;initAudio();applyPatch(RECIPES[recipeI].set);setName(RECIPES[recipeI].n.toUpperCase());renderPane();select(RECIPES[recipeI].why[0].id);refreshAsk()}
+ else if(b.dataset.why){select(b.dataset.why)}
+ else quizClick(b);
+});
+function goLesson(i){lessonI=i;store.set("lesson",i);renderPane();const L=LESSONS[i];hlSection(L.sec);if(L.sec)scrollToX(SECS[L.sec].rects[0][0]+SECS[L.sec].rects[0][2]/2);pane.scrollIntoView({block:"nearest"});refreshAsk()}
+function setName(n){document.getElementById("dname").textContent=n}
+
+/* ---------- quiz ---------- */
+const quiz={list:[],i:0,score:0,cur:null,answered:false,missed:[]};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startQuiz(){
+ const finds=shuffle(C.filter(c=>c.q)).slice(0,5).map(c=>({find:c.id,q:c.q,e:c.what.split(". ")[0]+"."}));
+ const mcs=shuffle(MCQ).slice(0,5).map(m=>({q:m.q,opts:shuffle([m.a].concat(m.w)),a:m.a,e:m.e,id:m.id}));
+ quiz.list=shuffle(finds.concat(mcs));quiz.i=0;quiz.score=0;quiz.missed=[];nextQ();
+}
+function clearMarks(){svg.querySelectorAll(".right,.wrong,.sel").forEach(e=>e.classList.remove("right","wrong","sel"))}
+function nextQ(){clearMarks();hlSection(null);quiz.answered=false;quiz.cur=quiz.list[quiz.i]||null;renderQuiz()}
+function renderQuiz(){
+ if(!quiz.list.length){pane.innerHTML=`<div class="card"><div class="eyebrow">Check yourself</div><h2>Ten questions</h2><p>Half ask you to find a control on the panel drawing. Half are multiple choice about what things do. Questions are drawn at random each round.</p>${store.get("best",null)!==null?`<p class="mute">Best so far: ${store.get("best")} / 10</p>`:""}<div class="rowbtns"><button class="btn primary" type="button" id="q-start">Start</button></div></div>`;return}
+ const q=quiz.cur;
+ if(!q){const best=Math.max(store.get("best",0),quiz.score);store.set("best",best);
+  pane.innerHTML=`<div class="card"><div class="eyebrow">Result</div><div class="score">${quiz.score}<span class="mute" style="font-size:24px"> / 10</span></div><p>${quiz.score>=9?"You know this panel.":quiz.score>=6?"Solid. Review the ones below and go again.":"A good start. Work through the lessons, then try again."}</p>`+
+   (quiz.missed.length?`<h3>Review</h3><ul class="list">`+quiz.missed.map(id=>`<li><button type="button" data-review="${id}"><b>${ctlName(BY[id])}</b><span>${SECS[BY[id].s].name}</span></button></li>`).join("")+`</ul>`:"")+
+   `<div class="rowbtns"><button class="btn primary" type="button" id="q-start">New round</button></div></div>`;return}
+ let h=`<div class="card"><div class="eyebrow">Question ${quiz.i+1} of 10 · score ${quiz.score}</div><div class="bar"><i style="width:${quiz.i*10}%"></i></div><h2>${q.q}</h2>`;
+ if(q.find)h+=`<p class="mute" id="q-hint">Answer by tapping the control on the synth above.</p>`;
+ else h+=`<div class="opts">`+q.opts.map((o,i)=>`<button type="button" data-opt="${i}">${o}</button>`).join("")+`</div>`;
+ h+=`<div id="q-fb"></div></div>`;pane.innerHTML=h;
+ if(q.find&&scroller.scrollWidth>scroller.clientWidth+2&&quiz.i===0)scroller.scrollTo({left:0});
+}
+function feedback(ok,q,id){
+ quiz.answered=true;if(ok)quiz.score++;else quiz.missed.push(id);
+ document.getElementById("q-fb").innerHTML=`<p><span class="verdict ${ok?"ok":"no"}">${ok?"Correct.":"Not that one."}</span> ${q.e}</p><div class="rowbtns"><button class="btn primary" type="button" id="q-next">${quiz.i===9?"See result":"Next"}</button></div>`;
+ document.getElementById("q-next").scrollIntoView({block:"nearest"});
+}
+function answerFind(id){
+ const q=quiz.cur,ok=id===q.find;
+ svg.querySelectorAll(`.ctl[data-id="${q.find}"]`).forEach(e=>e.classList.add("right"));
+ if(!ok)svg.querySelectorAll(`.ctl[data-id="${id}"]`).forEach(e=>e.classList.add("wrong"));
+ scrollToX(BY[q.find].x);const hint=document.getElementById("q-hint");if(hint)hint.hidden=true;
+ feedback(ok,q,q.find);
+}
+function quizClick(b){
+ if(b.id==="q-start")startQuiz();
+ else if(b.id==="q-next"){quiz.i++;nextQ()}
+ else if(b.dataset.review){setMode("explore");select(b.dataset.review)}
+ else if(b.dataset.opt!==undefined&&!quiz.answered){
+  const q=quiz.cur,ok=q.opts[+b.dataset.opt]===q.a;
+  pane.querySelectorAll(".opts button").forEach(x=>{if(x.textContent===q.a)x.classList.add("right");x.disabled=true});
+  if(!ok)b.classList.add("wrong");feedback(ok,q,q.id);
+ }
+}
+
+/* ---------- modes ---------- */
+function setMode(m,fromHash){
+ mode=m;document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.mode===m));
+ insp.hidden=(m==="quiz");clearMarks();
+ if(m==="quiz"){hlSection(null);renderPane()}
+ else if(m==="lessons"){renderPane();const L=LESSONS[lessonI];hlSection(L.sec);renderInsp();svg.querySelectorAll(`.ctl[data-id="${sel}"]`).forEach(e=>e.classList.add("sel"))}
+ else{select(sel,{scroll:false});renderPane()}
+ refreshAsk();
+ if(!fromHash){try{history.replaceState(null,"","#"+m)}catch(e){location.hash=m}}
+}
+document.querySelector("nav.tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(b)setMode(b.dataset.mode)});
+window.addEventListener("hashchange",()=>{const m=location.hash.slice(1);if(["explore","lessons","recipes","quiz"].includes(m)&&m!==mode)setMode(m,true)});
+
+/* chips */
+const chips=document.getElementById("chips");
+chips.innerHTML=Object.keys(SECS).map(k=>`<button type="button" data-sec="${k}">${SECS[k].name}</button>`).join("");
+chips.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const k=b.dataset.sec;
+ if(mode==="quiz"){scrollToX(SECS[k].rects[0][0]+SECS[k].rects[0][2]/2);return}
+ if(mode==="explore"){select(C.find(c=>c.s===k).id)}else{hlSection(k)}
+ scrollToX(SECS[k].rects[0][0]+SECS[k].rects[0][2]/2)});
+
+/* ---------- audio ---------- */
+const A={ctx:null,note:null,egT:-1,lfoT:-1,lastOct:"",irT:-1};
+const ex=(v,a,b)=>a*Math.pow(b/a,v);
+function initAudio(){
+ if(A.ctx){if(A.ctx.state==="suspended")A.ctx.resume();return}
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+ let c;try{c=A.ctx=new AC()}catch(e){return}
+ const G=v=>{const g=c.createGain();g.gain.value=v;return g};
+ A.o1=c.createOscillator();A.o2=c.createOscillator();
+ A.g1=G(0);A.g2=G(0);A.g3=G(0);A.o2dry=G(1);A.ring=G(0);A.ringOut=G(0);A.xm=G(0);
+ const nb=c.createBuffer(1,c.sampleRate*2,c.sampleRate),nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+ A.noise=c.createBufferSource();A.noise.buffer=nb;A.noise.loop=true;A.nf=c.createBiquadFilter();
+ A.pre=G(.5);A.drive=c.createWaveShaper();A.filt=c.createBiquadFilter();A.filt.type="lowpass";A.vca=G(0);A.master=G(.5);
+ A.curves=[8,3,1].map(k=>{const n=1024,a=new Float32Array(n);for(let i=0;i<n;i++){const x=i/(n-1)*2-1;a[i]=Math.tanh(k*x)/Math.tanh(k)}return a});
+ A.o1.connect(A.g1);A.o2.connect(A.o2dry);A.o2dry.connect(A.g2);A.o2.connect(A.ring);A.o1.connect(A.ring.gain);A.ring.connect(A.ringOut);A.ringOut.connect(A.g2);
+ A.o1.connect(A.xm);A.xm.connect(A.o2.frequency);
+ A.noise.connect(A.nf);A.nf.connect(A.g3);
+ [A.g1,A.g2,A.g3].forEach(g=>g.connect(A.pre));A.pre.connect(A.drive);A.drive.connect(A.filt);A.filt.connect(A.vca);A.vca.connect(A.master);
+ A.lfo=c.createOscillator();A.lfoG=G(0);A.lfo.connect(A.lfoG);
+ A.eg=c.createConstantSource?c.createConstantSource():null;A.egG=G(0);if(A.eg){A.eg.offset.value=0;A.eg.connect(A.egG);A.eg.start()}
+ A.out=G(1);A.an=c.createAnalyser();A.an.fftSize=1024;
+ A.master.connect(A.out);A.master.connect(A.an);
+ A.del=c.createDelay(2);A.delFb=G(.42);A.delWet=G(0);A.master.connect(A.del);A.del.connect(A.delFb);A.delFb.connect(A.del);A.del.connect(A.delWet);A.delWet.connect(A.out);
+ A.conv=c.createConvolver();A.revWet=G(0);A.master.connect(A.conv);A.conv.connect(A.revWet);A.revWet.connect(A.out);
+ A.ch=c.createDelay(.1);A.ch.delayTime.value=.018;A.chWet=G(0);A.chLfo=c.createOscillator();A.chLfoG=G(.003);A.chLfo.connect(A.chLfoG);A.chLfoG.connect(A.ch.delayTime);
+ A.master.connect(A.ch);A.ch.connect(A.chWet);A.chWet.connect(A.out);
+ const lim=c.createDynamicsCompressor();A.out.connect(lim);lim.connect(c.destination);
+ [A.o1,A.o2,A.noise,A.lfo,A.chLfo].forEach(n=>n.start());
+ apply(true);requestAnimationFrame(scope);
+}
+function makeIR(sec){const c=A.ctx,n=Math.floor(c.sampleRate*sec),b=c.createBuffer(2,n,c.sampleRate);for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.6)}return b}
+function conn(src,key,t){
+ if(A[key]===t)return;A[key]=t;try{src.disconnect()}catch(e){}
+ if(key==="egT"){if(t===0){src.connect(A.o1.detune);src.connect(A.o2.detune)}else if(t===1)src.connect(A.o2.detune);else src.connect(A.filt.detune)}
+ else{if(t===0){src.connect(A.o1.detune);src.connect(A.o2.detune)}else if(t===2)src.connect(A.filt.detune)}
+}
+const TYPES=["sawtooth","triangle","square"];
+function bpm(){return 56+S.tempo*184}
+function lfoHz(){if(S.lMode===0){const d=[8,4,2,1,.5,.25,.125][Math.min(6,Math.floor(S.lRate*7))];return bpm()/60/d}return ex(S.lRate,.05,28)}
+function lfoAmt(){return S.lTgt===0?S.lInt*S.lInt*1200:S.lTgt===2?S.lInt*4800:0}
+function freq(n,o){return 440*Math.pow(2,(n-69)/12+o-1)}
+function apply(force){
+ const c=A.ctx;if(!c)return;const t=c.currentTime,sp=(p,v)=>p.setTargetAtTime(v,t,.015);
+ A.o1.type=TYPES[S.v1wave];A.o2.type=TYPES[S.v2wave];
+ sp(A.o1.detune,(S.v1pitch-.5)*2400);sp(A.o2.detune,(S.v2pitch-.5)*2400);
+ const ok=S.v1oct+"/"+S.v2oct+"/"+S.octave;
+ if((force||ok!==A.lastOct)&&A.note!==null){A.o1.frequency.setTargetAtTime(freq(A.note,S.v1oct),t,.01);A.o2.frequency.setTargetAtTime(freq(A.note,S.v2oct),t,.01)}
+ A.lastOct=ok;
+ sp(A.g1.gain,S.mix1*.6);sp(A.g2.gain,S.mix2*.6);sp(A.g3.gain,S.multi===2?S.mix3*.5:0);
+ const ring=S.ring===0;sp(A.o2dry.gain,ring?0:1);sp(A.ringOut.gain,ring?1.6:0);
+ sp(A.xm.gain,S.xmod*S.xmod*2500);
+ const nt=Math.min(3,Math.floor(S.mtype*4));A.nf.type=["highpass","lowpass","bandpass","bandpass"][nt];A.nf.Q.value=nt===2?4:nt===3?.4:.7;sp(A.nf.frequency,ex(S.mshape,150,12000));
+ A.drive.curve=A.curves[S.drive];
+ sp(A.filt.frequency,ex(S.cutoff,45,18000));sp(A.filt.Q,.6+S.res*S.res*22);
+ const ei=(S.eInt-.5)*2;conn(A.egG,"egT",S.eTgt);sp(A.egG.gain,S.eTgt===2?ei*7200:ei*Math.abs(ei)*3600);
+ A.lfo.type=TYPES[S.lWave];sp(A.lfo.frequency,lfoHz());conn(A.lfoG,"lfoT",S.lTgt);
+ if(S.lMode!==2)sp(A.lfoG.gain,lfoAmt());
+ sp(A.master.gain,S.master*S.master*.9);
+ sp(A.chWet.gain,fxState[0]?.5+S.fxDepth*.4:0);sp(A.chLfo.frequency,ex(S.fxTime,.15,6));sp(A.chLfoG.gain,.001+S.fxDepth*.005);
+ sp(A.revWet.gain,fxState[1]?S.fxDepth*1.4:0);
+ const ir=Math.round(ex(S.fxTime,.4,5)*4)/4;if(fxState[1]&&ir!==A.irT){A.irT=ir;try{A.conv.buffer=makeIR(ir)}catch(e){}}
+ A.del.delayTime.setTargetAtTime(ex(S.fxTime,.04,1.1),t,.05);sp(A.delWet.gain,fxState[2]?S.fxDepth*.8:0);
+}
+function noteOn(n){
+ initAudio();const c=A.ctx;if(!c)return;const t=c.currentTime;
+ const first=A.note===null;A.note=n;
+ const tc=S.porta>.01?S.porta*S.porta*.4:0;
+ [[A.o1,S.v1oct],[A.o2,S.v2oct]].forEach(([o,oc])=>{const f=freq(n,oc);o.frequency.cancelScheduledValues(t);if(tc&&!first)o.frequency.setTargetAtTime(f,t,tc);else o.frequency.setValueAtTime(f,t)});
+ A.filt.detune.cancelScheduledValues(t);A.filt.detune.setValueAtTime((n-48)*100*[1,.5,0][S.keytrack],t);
+ const a=ex(S.aA,.003,4),d=ex(S.aD,.02,8),g=A.vca.gain;
+ g.cancelScheduledValues(t);g.setValueAtTime(Math.min(1,g.value),t);g.linearRampToValueAtTime(1,t+a);g.setTargetAtTime(S.aS*S.aS,t+a,d/4);
+ if(A.eg){const o=A.eg.offset,ea=ex(S.eA,.003,4),ed=ex(S.eD,.02,8);o.cancelScheduledValues(t);o.setValueAtTime(0,t);o.linearRampToValueAtTime(1,t+ea);o.setTargetAtTime(0,t+ea,ed/4)}
+ if(S.lMode===2){const l=A.lfoG.gain;l.cancelScheduledValues(t);l.setValueAtTime(lfoAmt(),t);l.setValueAtTime(0,t+1/lfoHz())}
+ A.live=performance.now();
+}
+function noteOff(){
+ const c=A.ctx;if(!c)return;const t=c.currentTime,g=A.vca.gain;
+ g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.setTargetAtTime(0,t,ex(S.aR,.02,8)/4);
+}
+/* scope */
+const scopeEl=()=>document.getElementById("scope");
+function scope(){
+ requestAnimationFrame(scope);if(!A.an)return;
+ const n=A.an.fftSize,buf=scope.b||(scope.b=new Uint8Array(n));A.an.getByteTimeDomainData(buf);
+ let s=0;for(let i=1;i<n/2;i++){if(buf[i-1]<128&&buf[i]>=128){s=i;break}}
+ const d=BY.disp,W=d.w-12,H=d.h-24,x0=d.x+6,y0=d.y+18+H/2,N=96;let pts="";
+ for(let i=0;i<N;i++){const v=(buf[s+Math.floor(i*(n/2)/N)]-128)/128;pts+=(x0+i*W/(N-1)).toFixed(1)+","+(y0-Math.max(-1,Math.min(1,v*1.6))*H/2).toFixed(1)+" "}
+ scopeEl().setAttribute("points",pts);
+}
+/* loop */
+let loopOn=false,loopI=0,loopTimer=null;
+function tick(){
+ if(!loopOn)return;const dur=60/bpm()/4*1000;
+ drawSteps(loopI);
+ if(steps[loopI]){noteOn(PATTERN[loopI]+(S.octave-2)*12+12);setTimeout(()=>{if(loopOn&&!keyDown)noteOff()},dur*.6)}
+ loopI=(loopI+1)%16;loopTimer=setTimeout(tick,dur);
+}
+const loopBtn=document.getElementById("loopBtn");
+function toggleLoop(){
+ initAudio();loopOn=!loopOn;loopBtn.classList.toggle("on",loopOn);loopBtn.textContent=loopOn?"■ Stop":"▶ Loop";loopBtn.setAttribute("aria-pressed",loopOn);
+ document.getElementById("b-play").classList.toggle("lit",loopOn);
+ if(loopOn){loopI=0;tick()}else{clearTimeout(loopTimer);noteOff();drawSteps()}
+}
+loopBtn.addEventListener("click",toggleLoop);
+/* keys */
+let keyDown=false;
+
+function refreshAsk(){}
+
+/* ---------- start ---------- */
+build();
+(function(){const m=location.hash.slice(1);setMode(["explore","lessons","recipes","quiz"].includes(m)?m:"explore",true)})();
+</script>
+</body>
+</html>
