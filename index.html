@@ -11,15 +11,16 @@
 <meta name="theme-color" content="#232527">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23232527'/%3E%3Ccircle cx='16' cy='16' r='9' fill='%233a3d40' stroke='%23777' /%3E%3Cpath d='M16 16 L21 9' stroke='%23fff' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
 /* Layout: the instrument sits on a tinted band; everything below is two ruled columns on an 8px rhythm. */
 :root{
   --bg:#eceeec; --card:#ffffff; --ink:#141618; --mute:#5d646a;
   --hair:#d9dddb; --accent:#d8371f; --accent-soft:rgba(216,55,31,.09);
   --good:#1c8556; --good-soft:rgba(28,133,86,.12);
-  --display:"Barlow Condensed","Arial Narrow",sans-serif;
-  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
@@ -44,10 +45,10 @@ a{color:inherit;text-underline-offset:3px}
 .band{background:var(--bg);border-bottom:1px solid var(--hair)}
 
 header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 32px;padding:24px 0 16px}
-.brand{font:600 24px/32px var(--display);letter-spacing:.02em}
-.brand span{color:var(--mute);font-weight:500;margin-left:12px;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+.brand{font:600 22px/32px var(--display);letter-spacing:-.02em}
+.brand span{color:var(--mute);font-weight:500;margin-left:12px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
 nav.tabs{display:flex;gap:24px;margin-left:auto}
-nav.tabs button{font:600 15px/32px var(--display);letter-spacing:.12em;text-transform:uppercase;background:none;border:0;border-bottom:2px solid transparent;padding:0;color:var(--mute)}
+nav.tabs button{font:500 13px/32px var(--display);letter-spacing:.08em;text-transform:uppercase;background:none;border:0;border-bottom:2px solid transparent;padding:0;color:var(--mute)}
 nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 
 .stage{padding-bottom:16px}
@@ -62,10 +63,10 @@ nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(-
 #panel .well{fill:#070708}
 #panel .screw{fill:#0e0f10;stroke:#4a4d50;stroke-width:1}
 #panel .div{stroke:#8d9093;stroke-width:1;opacity:.7}
-#panel .sect{font-size:16px;font-weight:600;letter-spacing:.06em;text-anchor:middle}
-#panel .lbl{font-size:10.5px;font-weight:500;letter-spacing:.05em;text-anchor:middle}
-#panel .pos{font-size:8.5px;font-weight:500;letter-spacing:.04em}
-#panel .jackt{font-size:9.5px;font-weight:500;letter-spacing:.06em;text-anchor:middle;fill:#c4c7c9}
+#panel .sect{font-size:14px;font-weight:600;letter-spacing:.04em;text-anchor:middle}
+#panel .lbl{font-size:9px;font-weight:500;letter-spacing:.03em;text-anchor:middle}
+#panel .pos{font-size:7.5px;font-weight:500;letter-spacing:.02em}
+#panel .jackt{font-size:8.5px;font-weight:500;letter-spacing:.04em;text-anchor:middle;fill:#c4c7c9}
 #panel .hit{fill:transparent;stroke:none}
 #panel .k .hit{touch-action:none}
 #panel .shadow{fill:#000;opacity:.5}
@@ -90,8 +91,8 @@ nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(-
 #panel .step.on .body{fill:#7d8389}
 #panel .step.cur .body{fill:#fff;stroke:#fff}
 #panel #scope{fill:none;stroke:#fff;stroke-width:1.4;stroke-linejoin:round}
-#panel .dname{font-size:9px;letter-spacing:.06em;fill:#c9ccce}
-#panel #mname{fill:#cfe0ff;font-size:11px;letter-spacing:.14em}
+#panel .dname{font-family:var(--mono);font-size:8px;letter-spacing:.02em;fill:#c9ccce}
+#panel #mname{font-family:var(--mono);fill:#cfe0ff;font-size:10px;letter-spacing:.12em}
 #panel .btn.lit .body{fill:#fff;stroke:#fff}
 #panel .key{touch-action:none;cursor:pointer}
 #panel .key.w{fill:url(#wk);stroke:#8e9092;stroke-width:1}
@@ -102,19 +103,19 @@ nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(-
 .under{display:flex;align-items:center;gap:16px;padding-top:8px;min-width:0}
 .chips{display:flex;gap:20px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chips button{flex:none;font:600 13px/32px var(--display);letter-spacing:.12em;text-transform:uppercase;background:none;border:0;border-bottom:2px solid transparent;padding:0;color:var(--mute);white-space:nowrap}
+.chips button{flex:none;font:500 12px/32px var(--display);letter-spacing:.08em;text-transform:uppercase;background:none;border:0;border-bottom:2px solid transparent;padding:0;color:var(--mute);white-space:nowrap}
 .chips button.on{color:var(--ink);border-bottom-color:var(--accent)}
 .sound{flex:none}
-#loopBtn{font:600 14px/24px var(--display);letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--ink);background:none;border-radius:999px;padding:4px 16px;min-width:104px}
+#loopBtn{font:500 13px/24px var(--display);letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);background:none;border-radius:999px;padding:4px 16px;min-width:104px}
 #loopBtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
 
 main{display:grid;gap:40px;padding:40px 0 64px;grid-template-columns:minmax(0,1fr)}
 @media (min-width:900px){main{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:64px;align-items:start}}
 .card{border-top:2px solid var(--ink);padding-top:16px}
 .side{display:grid;gap:40px;min-width:0}
-.eyebrow{font:600 13px/16px var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
-h2{font:600 32px/40px var(--display);letter-spacing:.01em;margin:0 0 8px;text-wrap:balance}
-h3{font:600 14px/24px var(--display);letter-spacing:.14em;text-transform:uppercase;margin:24px 0 0;color:var(--mute)}
+.eyebrow{font:500 12px/16px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+h2{font:600 32px/40px var(--display);letter-spacing:-.03em;margin:0 0 8px;text-wrap:balance}
+h3{font:500 12px/24px var(--mono);letter-spacing:.08em;text-transform:uppercase;margin:24px 0 0;color:var(--mute)}
 p{margin:0 0 16px;max-width:62ch}
 .mute{color:var(--mute)}
 .small,.note{font-size:14px;line-height:20px}
@@ -124,38 +125,38 @@ p{margin:0 0 16px;max-width:62ch}
 
 .valrow{display:flex;align-items:center;gap:16px;margin:8px 0 16px}
 .valrow input[type=range]{flex:1;accent-color:var(--accent);height:32px;min-width:0;margin:0}
-.readout{font:600 24px/32px var(--display);min-width:80px;text-align:right;font-variant-numeric:tabular-nums}
+.readout{font:500 22px/32px var(--mono);min-width:80px;text-align:right;font-variant-numeric:tabular-nums}
 .seg{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
-.seg button{font:600 14px/24px var(--display);letter-spacing:.08em;border:1px solid var(--hair);background:none;border-radius:6px;padding:3px 12px}
+.seg button{font:500 13px/24px var(--display);letter-spacing:.08em;border:1px solid var(--hair);background:none;border-radius:6px;padding:3px 12px}
 .seg button.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 
 .list,.tasks{list-style:none;margin:8px 0 0;padding:0}
 .list li,.tasks li{border-top:1px solid var(--hair)}
 .list li:last-child,.tasks li:last-child{border-bottom:1px solid var(--hair)}
 .list button,.tasks button{display:grid;grid-template-columns:136px minmax(0,1fr);gap:16px;width:100%;text-align:left;background:none;border:0;padding:11px 0 12px}
-.list b,.tasks i{font:600 15px/24px var(--display);letter-spacing:.08em;text-transform:uppercase;font-style:normal}
+.list b,.tasks i{font:500 13px/24px var(--display);letter-spacing:.08em;text-transform:uppercase;font-style:normal}
 .list span{color:var(--mute);font-size:14px;line-height:24px}
 .list button.on b{color:var(--accent)}
 .tasks i{color:var(--accent)}
 .tasks.num button{grid-template-columns:24px minmax(0,1fr)}
 
 .stepper{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}
-.stepper button{width:32px;height:32px;border-radius:50%;border:1px solid var(--hair);background:none;font:600 14px/1 var(--display);color:var(--mute);padding:0}
+.stepper button{width:32px;height:32px;border-radius:50%;border:1px solid var(--hair);background:none;font:500 13px/1 var(--mono);color:var(--mute);padding:0}
 .stepper button.done{border-color:var(--good);color:var(--good)}
 .stepper button.on{border-color:var(--ink);background:var(--ink);color:var(--card)}
 .rowbtns{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap}
-.btn{font:600 14px/24px var(--display);letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--ink);background:none;border-radius:999px;padding:7px 20px}
+.btn{font:500 13px/24px var(--display);letter-spacing:.08em;text-transform:uppercase;border:1.5px solid var(--ink);background:none;border-radius:999px;padding:7px 20px}
 .btn.primary{background:var(--ink);color:var(--card)}
 .btn:disabled{opacity:.3;cursor:default}
 .flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 16px}
-.flow button{font:600 14px/24px var(--display);letter-spacing:.08em;border:1px solid var(--ink);background:none;border-radius:4px;padding:3px 12px}
+.flow button{font:500 13px/24px var(--display);letter-spacing:.08em;border:1px solid var(--ink);background:none;border-radius:4px;padding:3px 12px}
 .flow .mod{border-style:dashed}
 .flow em{font-style:normal;color:var(--mute)}
 
 .recipes{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:8px;margin:8px 0 0}
 .recipes button{text-align:left;border:1px solid var(--hair);background:none;border-radius:8px;padding:11px 16px 12px}
 .recipes button.on{border-color:var(--accent);background:var(--accent-soft)}
-.recipes b{display:block;font:600 18px/24px var(--display);letter-spacing:.03em}
+.recipes b{display:block;font:600 16px/24px var(--display);letter-spacing:-.01em}
 .recipes span{font-size:13px;line-height:16px;color:var(--mute);display:block}
 
 .opts{display:grid;gap:8px;margin:16px 0}
@@ -166,7 +167,7 @@ p{margin:0 0 16px;max-width:62ch}
 .verdict.ok{color:var(--good)} .verdict.no{color:var(--accent)}
 .bar{height:2px;background:var(--hair);margin:0 0 24px}
 .bar i{display:block;height:100%;background:var(--accent)}
-.score{font:600 64px/64px var(--display);font-variant-numeric:tabular-nums;margin-bottom:16px}
+.score{font:600 64px/64px var(--display);letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin-bottom:16px}
 
 footer{border-top:1px solid var(--hair);padding:24px 0 40px;color:var(--mute);font-size:14px;line-height:20px}
 footer p{margin:0 0 4px;max-width:none}
@@ -176,7 +177,7 @@ footer p{margin:0 0 4px;max-width:none}
   header.top{padding:16px 0 8px}
   nav.tabs{margin-left:0;width:100%;gap:0;justify-content:space-between}
   .list button{grid-template-columns:104px minmax(0,1fr);gap:12px}
-  h2{font-size:28px;line-height:32px}
+  h2{font-size:26px;line-height:32px}
 }
 @media (prefers-reduced-motion:no-preference){.scroller{scroll-behavior:smooth}}
 </style>
@@ -453,7 +454,7 @@ function build(){
   }else if(c.t==="steps"){
    for(let i=0;i<16;i++)h+=`<g class="ctl step" data-id="steps" data-i="${i}" id="st-${i}" tabindex="0" role="button" aria-label="Step ${i+1}"><rect class="hit" x="${c.x+i*55}" y="${c.y-6}" width="55" height="34"/><rect class="body" x="${c.x+i*55}" y="${c.y}" width="50" height="20" rx="3"/></g>`;
   }else if(c.t==="jack"){
-   const w=c.l.length*6.2+14;
+   const w=c.l.length*6.4+14;
    h+=`<g ${a}><rect class="hit" x="${c.x-w/2}" y="12" width="${w}" height="26"/><text class="jackt" x="${c.x}" y="30">${c.l}</text></g>`;
   }
  });
